@@ -1,0 +1,6 @@
+.env
+node_modules
+.vercel
+logs
+logEvents.js
+main.js
