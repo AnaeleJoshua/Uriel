@@ -11,7 +11,7 @@ const loginPayload = require("../schemas/loginPayload");
 
   // [SchemaValidationMiddleware.verify(loginPayload)]
   router.post(
-    "/",[SchemaValidationMiddleware.verify(loginPayload)],login
+    "/login",[SchemaValidationMiddleware.verify(loginPayload)],login
   );
 
 module.exports = router

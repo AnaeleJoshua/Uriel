@@ -71,7 +71,7 @@ const handleRegister = async (req, res) => {
       });
 
       // Send a success response
-      return res.status(200).json({
+      return res.status(201).json({
         status: "success",
         message: "Registration successful",
         data: {

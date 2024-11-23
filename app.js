@@ -34,6 +34,8 @@ app.use(credentials);
 
 app.use(morgan("tiny"));
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Allow preflight requests for all routes
+
 
 // Middleware that parses the body payloads as JSON to be consumed by the next set of middlewares and controllers
 app.use(express.json());
@@ -54,11 +56,9 @@ app.use(cookieParser());
     // Routes
     app.get("/", (req, res) => res.send('Express on Vercel'));
     app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
-    app.use("/register", regRoute);
-    // app.use("/login", loginRoute);
-    // app.use("/refresh", refreshRoute);
-    // app.use("/api/users", userRoutes);
-    // app.use("/api/organisations", organizationRoutes);
+    app.use("/auth", require('./src/routes/authRoute'));
+    app.use("/api/users", userRoutes);
+    app.use("/api/organisations", organizationRoutes);
 
     // Error handler middleware
     app.use(errorHandler);

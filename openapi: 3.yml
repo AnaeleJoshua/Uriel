@@ -5,13 +5,11 @@ info:
   version: 1.0.0
   contact:
     name: Your Name
-    url: https://github.com/AnaeleJoshua
-    email: anaelejoshua@gmail.com
+    url: https://github.com/yourusername
+    email: yourname@example.com
 servers:
   - url: http://localhost:3000
     description: Development Server
-  - url: http://localhost:3000
-    description: production Server
 paths:
   /auth/register:
     post:
@@ -43,9 +41,7 @@ paths:
         '201':
           description: User registered successfully
         '400':
-          description: Bad request,
-        500:
-          description: An error occurred during resgistration 
+          description: Invalid input
   /auth/login:
     post:
       summary: Login a user and get access token
