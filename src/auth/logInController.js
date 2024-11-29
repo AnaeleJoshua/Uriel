@@ -1,5 +1,6 @@
 const dbInitialization = require("../models/modelInit");
 const { generateAccessToken, encryptPassword } = require('../../utils/utility');
+const bcrypt = require('bcryptjs')
 
 const handleLogIn = async (req, res) => {
   try {
@@ -31,8 +32,11 @@ const handleLogIn = async (req, res) => {
     }
 
     // Encrypt the input password and compare with stored password
-    const encryptedPassword = encryptPassword(password);
-    if (user.password !== encryptedPassword) {
+    const encryptedPassword = bcrypt.compare(password,user.password);
+    // const encryptedPassword = await encryptPassword(password);
+    console.log("userPass",user.password)
+    console.log("EncryptPass",await encryptedPassword)
+    if ( !encryptedPassword) {
       return res.status(401).json({
         status: "Unauthorized",
         message: "Invalid credentials",

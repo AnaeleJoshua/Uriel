@@ -4,7 +4,7 @@ info:
   description: An API for managing users, organisations, and their associations.
   version: 1.0.0
   contact:
-    name: Your Name
+    name: Joshua Anaele
     url: https://github.com/AnaeleJoshua
     email: anaelejoshua@gmail.com
 servers:
@@ -15,9 +15,9 @@ servers:
 paths:
   /auth/register:
     post:
-      summary: Register a new user
+      summary: This enpoint creates a new user
       requestBody:
-        description: User registration data
+        description: User registration payload
         required: true
         content:
           application/json:
@@ -39,6 +39,11 @@ paths:
                 phone:
                   type: string
                   example: "+123456789"
+              required:
+                - email
+                - firstName
+                - lastName
+                - password
       responses:
         '201':
           description: User registered successfully
@@ -49,6 +54,8 @@ paths:
   /auth/login:
     post:
       summary: Login a user and get access token
+      security:
+        - apiKeyAuth: []
       requestBody:
         description: User login credentials
         required: true
@@ -145,6 +152,11 @@ paths:
           description: Invalid input
   
 components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: access cookie
   schemas:
     User:
       type: object
