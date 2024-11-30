@@ -10,7 +10,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Development Server
-  - url: http://localhost:3000
+  - url: https://uriel-q6ux.onrender.com
     description: production Server
 paths:
   /auth/register:
