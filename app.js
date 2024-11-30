@@ -33,7 +33,7 @@ app.use(logger);
 app.use(credentials);
 
 app.use(morgan("tiny"));
-app.use(cors(corsOptions));
+app.use(cors()); //corsOptions
 app.options("*", cors(corsOptions)); // Allow preflight requests for all routes
 
 
