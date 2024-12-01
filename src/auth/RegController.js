@@ -1,5 +1,6 @@
 const dbInitialization = require("../models/modelInit");
 const { generateAccessToken, generateRefreshToken, encryptPassword } = require('../../utils/utility');
+const organisation = require("../schemas/organisation");
 
 const handleRegister = async (req, res) => {
   try {
@@ -82,6 +83,8 @@ const handleRegister = async (req, res) => {
             lastName: newUser.lastName,
             email: newUser.email,
             phone: newUser.phone,
+            organisation_name: newOrganisation.name,
+            organisation_id:newOrganisation.orgId
           },
         },
       });
