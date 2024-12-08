@@ -8,7 +8,7 @@ const initializeSequelize = async ()=>{
     if(!sequelizeInstance){
       console.log("Initiallizing new database connection ...")
       if (process.env.NODE_ENV === "production"){
-        sequelizeInstance = new Sequelize(process.env.POSTGRES_URL,{
+        sequelizeInstance = new Sequelize(process.env.DATABASE_URL,{
           dialect: "postgres",
           dialectModule : require("pg"),
           protocol: "postgres",
