@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Organisation Management API
-  description: An API for managing users, organisations, and their associations.
+  description: An API for managing users, organisations, and their associations. User's can Join and leave organisations different from their default organisation.
   version: 1.0.0
   contact:
     name: Joshua Anaele

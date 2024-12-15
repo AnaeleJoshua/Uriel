@@ -32,10 +32,10 @@ const handleLogIn = async (req, res) => {
     }
 
     // Encrypt the input password and compare with stored password
-    const encryptedPassword = bcrypt.compare(password,user.password);
+    const encryptedPassword = await bcrypt.compare(password,user.password);
     // const encryptedPassword = await encryptPassword(password);
     console.log("userPass",user.password)
-    console.log("EncryptPass",await encryptedPassword)
+    console.log("EncryptPass",encryptedPassword)
     if ( !encryptedPassword) {
       return res.status(401).json({
         status: "Unauthorized",
