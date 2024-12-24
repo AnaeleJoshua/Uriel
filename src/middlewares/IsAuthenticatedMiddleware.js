@@ -4,10 +4,10 @@ dotenv.config()
 module.exports = {
     check:(req,res,next)=>{
         const authHeader = req.headers['authorization']
-        console.log(authHeader)
+        console.log("authHeader:",authHeader)
         // IF no auth headers are provided
     // THEN return 401 Unauthorized error
-        if(!authHeader){
+        if(!authHeader?.startsWith('Bearer')){
             return res.status(401).json({
                 "status": 'Bad request',
                 "message": 'Auth failed',
@@ -16,15 +16,15 @@ module.exports = {
         }
          // IF bearer auth header is not provided
     // THEN return 401 Unauthorized error
-    if (!authHeader.startsWith('Bearer')){
-        return res.status(401).json({
-            "Status":'Bad request',
-            "Message":'Unauthorised',
-            "statusCode": 401
-        })
-    }
+    // if (!authHeader.startsWith('Bearer')){
+    //     return res.status(401).json({
+    //         "Status":'Bad request',
+    //         "Message":'Unauthorised',
+    //         "statusCode": 401
+    //     })
+    // }
     const token = authHeader.split(' ')[1];
-    // console.log(`token : ${token}\n`)
+    console.log(`token : ${token}\n`)
     // console.log(`jwt : ${jwtSecret}\n`)
 
 
@@ -38,8 +38,9 @@ module.exports = {
         }
       })
     }
+console.log("jwt:",process.env.ACCESS_TOKEN_SECRET)
 
-    const verified = jwt.verify(token,process.env.JWT_SECRET,{algorithms:['HS256']},(err,user)=>{
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,{algorithms:['HS256']},(err,user)=>{
        
       if (err) {
             return res.status(403).json({
