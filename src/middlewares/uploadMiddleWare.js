@@ -2,41 +2,55 @@ const multer = require("multer")
 const {CloudinaryStorage} = require("multer-storage-cloudinary")
 const cloudinary = require('../../utils/cloudinaryConfig');
 const path = require('path')
+const dbInitialization = require("../models/modelInit");
 
 const allowedFileTypes = ['image/jpg','image/jpeg','image/png']
-// function uploadMiddleware(folderName,allowedFileTypes,fileSize){
+const fileSize= 5*1024*1024
+ 
     const storage = new CloudinaryStorage({
         cloudinary:cloudinary,
-        params:(req,file)=>{
+        params:async (req,file)=>{
+            const {User} = await dbInitialization 
             // const folderPath= `${folderName.trim()}`
             const id = req.params
-            console.log(id)
+            // const user = await  User.findOne({where:{userId:id}})
+            // const folderName = `${user.firstName}_${user.lastName}`
             const fileExtension = path.extname(file.originalname).substring(1)
             const publicId = `${file.fieldname}-${Date.now()}`
 
             return {
-                folder:'cloudy',
+                folder:"folderName",
                 public_id:publicId,
                 format:fileExtension
             }
-        }
-    });
+        // }
+    }
+});
+
 
 //     return storage
-// }
-const upload = multer({
+
+const uploader = function uploadMiddleware(allowedFileTypes,fileSize){
+
+return multer({
+    // dest:path.join(__dirname,'../','uploads')
+    
     storage:storage,
     limits:{
-        fileSize:5*1024*1024
+        fileSize:fileSize
     },
-    // fileFilter:(req,file,cb)=>{
-    //     if (allowedFileTypes.includes(file.mimetype)){
-    //         cb(null,true)
-    //     }else{
-    //         cb(new Error(`Invalid file type:only ${allowedFileTypes.join(', ')} is allowed`))
-    //     }
+    fileFilter:(req,file,cb)=>{
+        if (allowedFileTypes.includes(file.mimetype)){
+            cb(null,true)
+        }else{
+            cb(new Error(`Invalid file type:only ${allowedFileTypes.join(', ')} is allowed`))
+        }
 
     // }
+}
 })
 
-module.exports=upload
+}
+const upload = uploader(allowedFileTypes,fileSize)
+
+module.exports = upload

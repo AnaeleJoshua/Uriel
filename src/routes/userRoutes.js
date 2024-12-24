@@ -10,7 +10,7 @@ router.get('/:id',[isAuthenticated.check,UserController.getUserById])
 router.put('/update/:id',[isAuthenticated.check,UserController.updateUser])
 // router.post('/:id/upload',upload.single('avatar'),
 // UserController.upload)
-app.post('/:id/upload', upload.single('image'), function (req, res) {
+router.post('/:id/upload', upload.single('avatar'), function (req, res) {
     res.json(req.file);
   });
 

@@ -35,7 +35,7 @@ const InitializeDB = async () => {
     });
 
     // Sync models with the database
-    await sequelize.sync({ alter: true }); // Use `alter` for safe schema updates in production
+    await sequelize.sync({ alter:true }); // Use `alter` for safe schema updates in production
     console.log("Database synchronized successfully.");
 
     // Return initialized models
