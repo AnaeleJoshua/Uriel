@@ -82,9 +82,10 @@ module.exports = {
     },
     upload:async (req,res)=>{
             const userId = req.params
+            let transaction
           try{
             const sequelize = await getSequelizeInstance()
-            const transaction = await sequelize.transaction()
+             transaction = await sequelize.transaction()
             if (!req.file) {
                 // No file was uploaded
                 return res.status(400).json({ error: "No file uploaded" });
@@ -93,16 +94,18 @@ module.exports = {
               const fileUrl = req.file.path; // URL of the uploaded file in Cloudinary
               console.log(fileUrl)
               // Perform any additional logic or save the file URL to a database
-            
-              res.status(200).json({ success: true, fileUrl: fileUrl });
               const user = await User.findOne({where:{userId}},{transaction})
               user.avatarUrl = fileUrl
+              console.log(fileUrl)
+              console.log(user)
               await user.save()
               
               transaction.commit()
+              
               return res.status(200).json({
                 status:"success",
-                "message":"record updated"
+                "message":"file uploaded",
+                fileUrl: fileUrl
               })
           }catch(err){
             if (transaction){

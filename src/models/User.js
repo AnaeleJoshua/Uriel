@@ -39,7 +39,7 @@ const UserModel = {
   },
   isVerified:{
     type: DataTypes.BOOLEAN,
-    default: false,
+    defaultValue: false,
   }
 };
 
