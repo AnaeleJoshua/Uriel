@@ -53,10 +53,11 @@ module.exports = {
           const payload = req.body
         //   console.log(payload)
         //   console.log(id) 
-          try{
-            const sequelize = await getSequelizeInstance()
+        const sequelize = await getSequelizeInstance()
             const transaction = await sequelize.transaction()
-          const user = await User.updateUser({userId:id},{payload},{transaction})
+          try{
+            
+          const user = await User.update({payload},{where:{userId:id}},{transaction})
           console.log(user)
           transaction.commit()
           return res.status(200).json({
