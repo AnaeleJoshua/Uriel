@@ -9,7 +9,7 @@ const morgan = require("morgan");
 // const swaggerUI = require('swagger-ui-express');
 // const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
-const { logger } = require('./src/middlewares/logEvents');
+// const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
 

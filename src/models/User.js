@@ -33,6 +33,14 @@ const UserModel = {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  // avatarUrl:{
+  //   type: DataTypes.STRING,
+  //   allowNull: true,
+  // },
+  // isVerified:{
+  //   type: DataTypes.BOOLEAN,
+  //   default: false,
+  // }
 };
 
 module.exports = {
