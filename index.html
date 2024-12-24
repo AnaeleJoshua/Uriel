@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>file uploadert</title>
+    <style>
+        body {
+            font-family:Arial, Helvetica, sans-serif;
+            font-size: 1.5rem;
+            background-color: #333;
+            color: whitesmoke;
+        }
+        input,button {
+            font: inherit;
+            width: max-content;
+        }
+        form {
+            display: flex;
+            flex-flow: column nowrap;
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>nodejs fileuploader</h1>
+    <form action="/api/users/8/upload" enctype="multipart/form-data" method="post">
+        <input type="file"  id="myFiles" name="avatar" accept="image/*" multiple>
+        <!-- <input type="file"  id="myFilee" name="foo1" accept="image/*" multiple> -->
+        <button type="submit">compress image</button>
+    </form>
+    <!-- <form id="downloadForm" enctype="multipart/form-data"> 
+        <input type="file"  id="myFiles" name="foo" accept="image/*" multiple> 
+         <label for="fool">name of file</label>
+        <input type="text"   id="fileName" name="foo1" accept="image/*" multiple>
+        <button type="submit">Download</button>
+    </form> -->
+    
+    <!-- <script>
+        const form = document.getElementById('uploadForm')
+        const downloadForm = document.getElementById('downloadForm')
+
+        const sendFiles = async ()=>{
+                //onject
+                const myFiles = document.getElementById('myFiles').files 
+                const formData = new FormData()
+                Object.keys(myFiles).forEach(key=>{
+                    formData.append(myFiles.item(key).name,myFiles.item(key))
+                })
+                const response = await fetch('http://localhost:3000/api/users/8/upload',{
+                    method: 'POST',
+                    body: formData
+                })
+
+                const json = await response.json()
+                // console.log('hello')
+                // console.log(json)
+
+                const h2 = document.querySelector('h2')
+                h2.textContent = `Status: ${json?.status}`
+                // h2.textContent = `hello`
+                const h3 = document.querySelector('h3')
+                h3.textContent = json?.message
+
+        }
+        
+        const downloadFile = async()=>{
+            const fileName = document.getElementById('fileName').value
+            fileName1 = fileName.toString().split('.')[0]
+            console.log(fileName1)
+            const response = await fetch(`http://localhost:3500/download/${fileName1}`,{
+                method:"GET"
+            })
+                const blob = await response.blob()
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.style.display = 'none'
+                a.href= url
+                a.download = `${fileName}`
+                document.body.appendChild(a)
+                a.click()
+
+                window.URL.revokeObjectURL(url)
+                // console.log(json)
+                // const img = document.getElementById('img')
+                // img.innerHTML = json
+        }
+
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault()
+            sendFiles()
+        })
+
+
+        downloadForm.addEventListener('submit',(e)=>{
+            e.preventDefault()
+
+            downloadFile()
+        })
+    </script> -->
+</body>
+</html>

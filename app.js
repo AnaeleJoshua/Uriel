@@ -2,16 +2,17 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3500;
 const cors = require("cors");
 const corsOptions = require('./config/corsOptions');
 const morgan = require("morgan");
 // const swaggerUI = require('swagger-ui-express');
 // const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
-// const { logger } = require('./src/middlewares/logEvents');
+const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
+const path = require('path')
 
 // Create swaggerDocs file
 // const swaggerJsDocs = YAML.load('./api.yaml');
@@ -47,7 +48,7 @@ app.use(cookieParser());
     console.log("Database synchronized.");
 
     // Routes
-    app.get("/", (req, res) => res.send('Express on Vercel'));
+    app.get("/", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
     app.use("/auth", require('./src/routes/authRoute'));
     app.use("/api/users", require("./src/routes/userRoutes"));
