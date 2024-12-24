@@ -6,22 +6,15 @@ const port = process.env.PORT || 3000;
 const cors = require("cors");
 const corsOptions = require('./config/corsOptions');
 const morgan = require("morgan");
-// const swaggerUI = require('swagger-ui-express');
-// const YAML = require('yamljs');
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
 const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
 
 // Create swaggerDocs file
-// const swaggerJsDocs = YAML.load('./api.yaml');
-
-// Express Routes Import
-const regRoute = require("./src/routes/regRoute");
-const loginRoute = require("./src/routes/loginRoute");
-const refreshRoute = require("./src/routes/refreshRoute");
-const userRoutes = require("./src/routes/userRoutes");
-const organizationRoutes = require("./src/routes/organisationsRoutes");
+const swaggerJsDocs = YAML.load('./api.yaml');
 
 // Middleware import
 const errorHandler = require('./src/middlewares/errorHandler');
@@ -55,10 +48,10 @@ app.use(cookieParser());
 
     // Routes
     app.get("/", (req, res) => res.send('Express on Vercel'));
-    // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
+    app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
     app.use("/auth", require('./src/routes/authRoute'));
-    app.use("/api/users", userRoutes);
-    app.use("/api/organisations", organizationRoutes);
+    app.use("/api/users", require("./src/routes/userRoutes"));
+    app.use("/api/organisations", require("./src/routes/organisationsRoutes"));
 
     // Error handler middleware
     app.use(errorHandler);
