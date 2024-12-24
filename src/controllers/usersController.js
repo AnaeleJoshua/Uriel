@@ -1,5 +1,6 @@
 const dbInitialization = require("../models/modelInit");
 const getSequelizeInstance = require('../../config/db');
+const uploadMiddleWare= require('../middlewares/uploadMiddleWare')
 
 module.exports = {
     getUserById : async (req,res)=>{
@@ -55,6 +56,44 @@ module.exports = {
                 "message":`record not updated`,
                 "status":"bad request"
             })
+          }
+
+    },
+    upload:async (req,res)=>{
+        const {User} = await dbInitialization
+        const sequelize = await getSequelizeInstance()
+         const transaction = await sequelize.transaction()
+      
+        const {
+            params: { id }
+          } = req;
+          const payload = req.body
+          try{
+            let user = await User.findUser({userId:id})
+            if(!user){
+                return res.sendStatus(401)
+            }
+            const folderName = `${user.firstName}_${user.lastName}`
+            const allowedFileTypes = ['image/jpg','image/jpeg','image/png']
+            const fileSize = 5*1024*1024
+            const upload = uploadMiddleWare(folderName,allowedFileTypes,fileSize)
+            const uploadStatus = upload.single("avatar")
+            console.log(uploadStatus)
+            if (!req.file) {
+                // No file was uploaded
+                return res.status(400).json({ error: "No file uploaded" });
+              }
+            
+              // File upload successful
+              const fileUrl = req.file.path; // URL of the uploaded file in Cloudinary
+              
+              // Perform any additional logic or save the file URL to a database
+            
+              res.status(200).json({ success: true, fileUrl: fileUrl });
+
+
+          }catch(err){
+
           }
 
     }
