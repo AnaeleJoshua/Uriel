@@ -48,74 +48,63 @@ module.exports = {
     },
     updateUser: async(req,res)=>{
         const {User} = await dbInitialization
-        const {
-            params: { id }
-          } = req;
-          const payload = req.body
-        //   console.log(payload)
-        //   console.log(id) 
+        const { params: { id }, body: payload } = req;
         const sequelize = await getSequelizeInstance()
-            const transaction = await sequelize.transaction()
+        const transaction = await sequelize.transaction()
           try{
-            
-          const user = await User.update({payload},{where:{userId:id}},{transaction})
-          console.log(user)
+            const [updatedRows] = await User.update({payload},{where:{userId:id}},{transaction})
+          if (!updatedRows) {
+            throw new Error(" no changes applied");
+            }
           transaction.commit()
           return res.status(200).json({
             status:"success",
             "message":"record updated"
           })
           }catch(err){
-            if (transaction){
-                try{
-                    await transaction.rollback()
-                }catch(rollbackError){
-                    console.error(`transaction rollback error ${rollbackError}`)
-                }
-            }
-            return res.status(401).json({
-                "message":`record not updated`,
-                "status":"bad request"
-            })
-          }
-
+            console.error(err);
+            if (transaction) await transaction.rollback();
+            return res.status(400).json({
+                status: "Bad Request",
+                message: "Failed to update record",
+            });
+        }
     },
-    upload:async (req,res)=>{
-            const userId = req.params
-            let transaction
+    uploadAvatar:async (req,res)=>{
+            const {params:{id}} = req
+            const {file} = req
+            if (!file) {
+                return res.status(400).json({ status: "Bad Request", message: "No file uploaded" });
+            }
+            // File upload successful
+            const fileUrl = req.file.path; // URL of the uploaded file in Cloudinary
+            const sequelize = await getSequelizeInstance();
+            const transaction = await sequelize.transaction();
           try{
-            const sequelize = await getSequelizeInstance()
-             transaction = await sequelize.transaction()
-            if (!req.file) {
-                // No file was uploaded
-                return res.status(400).json({ error: "No file uploaded" });
-              }
-              // File upload successful
-              const fileUrl = req.file.path; // URL of the uploaded file in Cloudinary
-              console.log(fileUrl)
+            const {User} = await dbInitialization
               // Perform any additional logic or save the file URL to a database
-              const user = await User.findOne({where:{userId}},{transaction})
+              const user = await User.findOne({userId:id},{transaction})
+              if (!user) {
+                throw new Error("User not found");
+            }
               user.avatarUrl = fileUrl
-              console.log(fileUrl)
-              console.log(user)
-              await user.save()
-              
+              await user.save({transaction})
+            
               transaction.commit()
-              
               return res.status(200).json({
                 status:"success",
                 "message":"file uploaded",
                 fileUrl: fileUrl
               })
           }catch(err){
-            if (transaction){
-                try{
-                    await transaction.rollback()
-                }catch(rollbackError){
-                    console.error(`transaction rollback error ${rollbackError}`)
-                }
+            console.error(err)
+            if (transaction) await transaction.rollback()
+                return res.status(400).json({
+                    status: "Bad Request",
+                    message: "File upload failed",
+                });
           }
 
     }
 
-    }}
+}
