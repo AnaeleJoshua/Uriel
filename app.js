@@ -48,7 +48,8 @@ app.use(cookieParser());
     console.log("Database synchronized.");
 
     // Routes
-    app.get("/", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
+    app.get("/", (req, res) =>  res.send('welcome to Uriel'));
+    app.get("/avatar", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
     app.use("/auth", require('./src/routes/authRoute'));
     app.use("/api/users", require("./src/routes/userRoutes"));
