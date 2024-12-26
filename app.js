@@ -12,6 +12,7 @@ const getSequelizeInstance = require('./config/db');
 const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
+const path = require('path')
 
 // Create swaggerDocs file
 // const swaggerJsDocs = YAML.load('./api.yaml');
@@ -47,7 +48,7 @@ app.use(cookieParser());
     console.log("Database synchronized.");
 
     // Routes
-    app.get("/", (req, res) => res.send('Express on Vercel'));
+    app.get("/", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
     app.use("/auth", require('./src/routes/authRoute'));
     app.use("/api/users", require("./src/routes/userRoutes"));
