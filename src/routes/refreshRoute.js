@@ -8,8 +8,7 @@ const refresh = require("../auth/refreshController");
 
 
 
-router.post(
-    "/",refresh);
+router.post("/", refresh);
 
   
 

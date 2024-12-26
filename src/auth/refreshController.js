@@ -18,7 +18,7 @@ const handleRefresh = async (req, res) => {
     const refreshToken = cookies.jwt;
 
     // Find user with the provided refresh token
-    const foundUser = await User.findUser({ refreshToken });
+    const foundUser = await User.findOne({where:{ refreshToken:refreshToken}});
     if (!foundUser) {
       return res.status(403).json({
         status: "Forbidden",
