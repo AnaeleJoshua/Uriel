@@ -105,6 +105,30 @@ module.exports = {
                 });
           }
 
+    },
+    getAvatar: async(req,res)=>{
+       //get user id
+       const {params:{id}} = req
+       //extract avatar url from db using id
+       const User = await dbInitialization
+       try{
+       const userAvatarUrl = await User.findOne({where:{userId:id},attributes:['avatarUrl']})
+       if(!userAvatarUrl) return res.status(400).json('Avatar not found')
+        return res.status(200).json({
+                     status: 'success',
+                     data:{
+                        avatarUrl:userAvatarUrl
+                     }
+            }) 
+
+       //return image 
+       }catch(err){
+        console.error('an error occurred: ',err)
+        return res.status(401).json({
+            staus:'Bad request',
+            message:'operation failed'
+        })
+       }
     }
 
 }
