@@ -49,10 +49,19 @@ module.exports = {
     updateUser: async(req,res)=>{
         const {User} = await dbInitialization
         const { params: { id }, body: payload } = req;
+        console.log(payload)
         const sequelize = await getSequelizeInstance()
         const transaction = await sequelize.transaction()
           try{
-            const [updatedRows] = await User.update({payload},{where:{userId:id}},{transaction})
+const [updatedRows] = await User.update(
+   payload , // Fields to update
+  {
+    where: { userId: id }, // Conditions
+    transaction,           // Transaction (inside options object)
+  }
+);
+
+            console.log(updatedRows)
           if (!updatedRows) {
             throw new Error(" no changes applied");
             }
