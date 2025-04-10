@@ -5,7 +5,7 @@ const organisation = require("../schemas/organisation");
 const handleRegister = async (req, res) => {
   try {
     // Ensure models and sequelize instance are loaded
-    const { User, Organisation } = await dbInitialization;
+    const { User, Organisation,UserOrganisation } = await dbInitialization;
 
     const payload = req.body;
     const payloadEmail = payload.email;
@@ -46,12 +46,16 @@ const handleRegister = async (req, res) => {
           name: `${newUser.firstName}'s Organisation`,
           description: `${newUser.firstName}'s organisation`,
           createdBy: `${newUser.firstName} ${newUser.lastName}`,
+          ownerId: newUser.userId
         },
         { transaction }
       );
 
       // Associate the user with the organization
       await newUser.addOrganisation(newOrganisation, { transaction });
+        //update role in organisation to owner
+
+      // await newUser.addUserOrganisation(,{transaction})
 
       // Generate access and refresh tokens
       const accessToken = generateAccessToken(payloadEmail, newUser.userId);

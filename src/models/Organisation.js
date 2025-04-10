@@ -19,6 +19,10 @@ const OrganisationModel = {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  ownerId:{
+    type:DataTypes.INTEGER,
+    allowNull: false
+  }
 };
 
 module.exports = {

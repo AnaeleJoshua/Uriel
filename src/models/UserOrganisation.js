@@ -21,6 +21,10 @@ const UserOrganisationModel = {
     },
     onDelete: "CASCADE",
   },
+  role:{
+    type:DataTypes.ENUM('owner','admin','user'),
+    defaultValue:'user'
+  }
 };
 
 module.exports = {
