@@ -1,5 +1,5 @@
 const dbInitialization = require("../models/modelInit");
-const { generateAccessToken, encryptPassword } = require('../../utils/utility');
+const { generateAccessToken,generateRefreshToken} = require('../../utils/utility');
 const bcrypt = require('bcryptjs')
 
 const handleLogIn = async (req, res) => {
@@ -44,8 +44,19 @@ const handleLogIn = async (req, res) => {
       });
     }
 
-    // Generate an access token
+    // Generate an access token and refresh token
     const accessToken = generateAccessToken(user.email, user.userId);
+     const refreshToken = generateRefreshToken(user.email, user.userId);
+     user.refreshToken = refreshToken
+     await user.save()
+
+     // Set the refresh token as an HTTP-only cookie
+     res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
 
     // Respond with success and access token
     return res.status(200).json({

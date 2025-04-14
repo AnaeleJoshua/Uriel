@@ -140,6 +140,9 @@ module.exports = {
             message:'operation failed'
         })
        }
+    },
+    confirmEmail:async (req,res)=>{
+        
     }
 
 }

@@ -15,13 +15,13 @@ const OrganisationModel = {
   description: {
     type: DataTypes.STRING,
   },
-  createdBy: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   ownerId:{
     type:DataTypes.INTEGER,
     allowNull: false
+  },
+  createdBy: {
+    type: DataTypes.STRING,
+    allowNull: false,
   }
 };
 

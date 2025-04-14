@@ -14,6 +14,7 @@ router.post(
     "/",
     [SchemaValidationMiddleware.verify(registerPayload)],register
   );
+  
 
   
 

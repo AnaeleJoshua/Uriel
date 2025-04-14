@@ -1,9 +1,9 @@
 const dbInitialization = require("../models/modelInit");
 
-async function authorizeRoles(roles) {
-    const {UserOrganisation } = await dbInitialization;
+function authorizeRoles(roles) {
   
-    return async (req, res, next) => {
+  return async (req, res, next) => {
+      const {UserOrganisation } = await dbInitialization;
       const { orgId } = req.params;
       const userId = req.user.userId;
   

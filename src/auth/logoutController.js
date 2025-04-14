@@ -9,13 +9,19 @@ const logOut = async (req,res) => {
     try{
         const {User} = await dbInitialization
         const {cookies:{jwt},user:{userId}} = req //destruct jwt and userId from req object
-        console.log(userId)
+        console.log("userI",userId)
         if (!jwt){
             return res.status(400).json({status:'failed',
                 'message':'invalid request'
             })
         }
-        const [updateRow] = await User.update({refreshToken:''},{where:{userId}})
+        const user = await User.findByPk(userId);
+        console.log(user)
+        if(user){
+          user.refreshToken = "";
+          await user.save()
+        }
+        // console.log(updateRow)
         // Set the refresh token as an HTTP-only cookie
       res.clearCookie("jwt", {
         httpOnly: true,

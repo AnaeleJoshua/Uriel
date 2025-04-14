@@ -5,42 +5,35 @@ const jwt = require("jsonwebtoken");
 const handleRefresh = async (req, res) => {
   try {
     const { User } = await dbInitialization;
-
     // Check for cookies containing the JWT
-    const cookies = req.cookies;
-    if (!cookies?.jwt) {
+    const tokenFromCookie = req.cookies?.jwt;
+    if (!tokenFromCookie) {
       return res.status(401).json({
         status: "Unauthorized",
         message: "No refresh token provided",
       });
     }
-
-    const refreshToken = cookies.jwt;
-
-    // Find user with the provided refresh token
-    const foundUser = await User.findUser({ refreshToken });
-    if (!foundUser) {
-      return res.status(403).json({
-        status: "Forbidden",
-        message: "Invalid refresh token",
-      });
-    }
-
     // Verify the refresh token
     jwt.verify(
-      refreshToken,
+      tokenFromCookie,
       process.env.REFRESH_TOKEN_SECRET,
-      (err, decoded) => {
-        if (err || foundUser.userId !== decoded.userId) {
+     async (err, decoded) => {
+        if (err) {
           return res.status(403).json({
             status: "Forbidden",
             message: "Invalid or expired refresh token",
           });
         }
-
+        const user = await User.findOne({ where: { userId: decoded.userId } });
+        if (!user || user.refreshToken !== tokenFromCookie) {
+          // If the user is not found or the refresh token doesn't match  
+          return res.status(403).json({
+            status: "Forbidden",
+            message: "User not found",
+          });
+        }
         // Generate a new access token
         const accessToken = generateAccessToken(decoded.email, decoded.userId);
-
         return res.status(200).json({
           status: "success",
           message: "Access token refreshed successfully",

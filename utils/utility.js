@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto');
 
 
 const genrateToken = (payload,secret,expiresIn) => {
@@ -20,6 +21,11 @@ const generateRefreshToken = (email, userId) => {
     return genrateToken(payload,secret,expiration) 
   };
 
+  //generate random token
+  const generateRandomToken = ()=>{
+    return crypto.randomBytes(20).toString('hex')
+  }
+
 
   // Encrypts the password using SHA256 Algorithm, for enhanced security of the password
 const encryptPassword = (password) => {
@@ -35,4 +41,4 @@ const encryptPassword = (password) => {
     return hashedPass
   };
 
-  module.exports = {encryptPassword,generateAccessToken,generateRefreshToken}
+  module.exports = {encryptPassword,generateAccessToken,generateRefreshToken,generateRandomToken}

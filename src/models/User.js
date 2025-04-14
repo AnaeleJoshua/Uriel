@@ -40,6 +40,22 @@ const UserModel = {
   isVerified:{
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  confirmationCode:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  confirmationExpires:{
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  resetPasswordCode:{
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  resetPasswordExpires:{
+    type: DataTypes.DATE,
+    allowNull: true,
   }
 };
 
