@@ -1,6 +1,24 @@
 const sendEmail = require('./sendEmail')
 const {generateRandomToken} = require('./utility')
+const ejs = require('ejs');
+const path = require('path');
 
+
+// Render EJS template
+const templatePath = path.join(__dirname, '../email_templates', 'welcome.ejs');
+
+const renderTemplate = (data) => {
+    return new Promise((resolve, reject) => {
+        ejs.renderFile(templatePath, data, (err, html) => {
+            if (err) {
+                console.error('Error rendering EJS template:', err);
+                reject(err);
+            } else {
+                resolve(html);
+            }
+        });
+    });
+}
 const sendConfirmationEmail = async (user,hostUrl)=>{
     const token = generateRandomToken()
     const expirationDate = new Date()
@@ -13,13 +31,12 @@ const sendConfirmationEmail = async (user,hostUrl)=>{
     const testUrl = `http://localhost:5000/api/v1`
 
     const confirmation_url = `${testUrl}/auth/confirmation-email?token=${token}`
-    console.log("url",confirmation_url)
-    const htmlContent = `<p> Hi ${user.firstName},</p>
-                        <p>Please click the link below to confirm your email address:</p>
-                        <a href="${confirmation_url}">Confirm email</a>
-                        `
-
-                    return sendEmail(user.email,'Email Confirmation',htmlContent)
+    const data = {
+        name: user.firstName,
+        confirmationUrl: confirmation_url,
+    }
+    const htmlContent = await renderTemplate(data)
+    return sendEmail(user.email,'Email Confirmation',htmlContent)
 }
 
 module.exports = sendConfirmationEmail

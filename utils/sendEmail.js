@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const path = require('path')
 
 //set up mail transport 
-// require('dotenv').config();
+require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
     service: process.env.MAIL_TRANSPORTER,
@@ -27,9 +27,9 @@ const sendEmail = (to,subject,htmlContent)=>{
         attachments:[
             {
                 filename:'josh',
-                path:path.join(__dirname,'../','josh.jpg'),
-                contentType:'image/jpg',
-                cid:'unique'
+                path:path.join(__dirname,'../','email_banner.png'),
+                contentType:'image/png',
+                cid:'banner-img'
         },
             {
                 filename:'josh',
@@ -43,7 +43,13 @@ const sendEmail = (to,subject,htmlContent)=>{
     // console.log("html",mailOptions.html)
     // console.log("filepath",mailOptions.attachments[0].path)
 return transporter.sendMail(mailOptions)
-.then
+.then((info) => {
+    console.log('Email sent:', info.response);      
+
+}  )
+.catch((error) => {
+    console.error('Error sending email:', error);
+});
 }
 // sendEmail('anaelejoshua0508@gmail.com','test','<h1>hello</h1>')
 //     .then((info) => {
