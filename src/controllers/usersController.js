@@ -46,30 +46,40 @@ module.exports = {
                 }
         })
     },
+    //update user info
     updateUser: async(req,res)=>{
         const {User} = await dbInitialization
         const { params: { id }, body: payload } = req;
+        console.log(payload)
         const sequelize = await getSequelizeInstance()
         const transaction = await sequelize.transaction()
           try{
-            const [updatedRows] = await User.update({payload},{where:{userId:id}},{transaction})
-          if (!updatedRows) {
-            throw new Error(" no changes applied");
-            }
-          transaction.commit()
-          return res.status(200).json({
-            status:"success",
-            "message":"record updated"
-          })
+              const [updatedRows] = await User.update(
+                  payload , // Fields to update
+                  {
+                    where: { userId: id }, // Conditions
+                    transaction,           // Transaction (inside options object)
+                  }
+              );
+                console.log(updatedRows)
+              if (!updatedRows) {
+                throw new Error(" no changes applied");
+                }
+              transaction.commit()
+              return res.status(200).json({
+                status:"success",
+                "message":"record updated"
+              })
           }catch(err){
-            console.error(err);
-            if (transaction) await transaction.rollback();
-            return res.status(400).json({
-                status: "Bad Request",
-                message: "Failed to update record",
-            });
+              console.error(err);
+              if (transaction) await transaction.rollback();
+              return res.status(400).json({
+                  status: "Bad Request",
+                  message: "Failed to update record",
+              });
         }
     },
+    //upload avatar
     uploadAvatar:async (req,res)=>{
             const {params:{id}} = req
             const {file} = req
@@ -106,6 +116,7 @@ module.exports = {
           }
 
     },
+    //getAvatar
     getAvatar: async(req,res)=>{
        //get user id
        const {params:{id}} = req
@@ -129,6 +140,9 @@ module.exports = {
             message:'operation failed'
         })
        }
+    },
+    confirmEmail:async (req,res)=>{
+        
     }
 
 }
