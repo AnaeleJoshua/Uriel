@@ -28,9 +28,9 @@ const sendConfirmationEmail = async (user,hostUrl)=>{
     user.confirmationCode = token
     user.confirmationExpires = expirationDate;
     await user.save()
-    const testUrl = `http://localhost:5000/api/v1`
+    // const testUrl = `http://localhost:5000/api/v1`
 
-    const confirmation_url = `${testUrl}/auth/confirmation-email?token=${token}`
+    const confirmation_url = `${hostUrl}/auth/confirmation-email?token=${token}`
     const data = {
         name: user.firstName,
         confirmationUrl: confirmation_url,
