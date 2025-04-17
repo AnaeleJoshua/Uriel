@@ -36,6 +36,7 @@ const sendConfirmationEmail = async (user,hostUrl)=>{
         confirmationUrl: confirmation_url,
     }
     const htmlContent = await renderTemplate(data)
+    console.log("htmlContent",htmlContent)
     return sendEmail(user.email,'Email Confirmation',htmlContent)
 }
 
