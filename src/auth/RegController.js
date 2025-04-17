@@ -16,6 +16,8 @@ const handleRegister = async (req, res) => {
     // Start a database transaction
     const sequelize = User.sequelize; // Get Sequelize instance from the User model
     const transaction = await sequelize.transaction();
+    console.log(UserOrganisation.getTableName());
+
     try {
       // Check if the user already exists
       const existingUser = await User.findOne({ where: { email: payloadEmail }, transaction });
