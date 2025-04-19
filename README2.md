@@ -1,146 +1,135 @@
-Organization Management API
-A robust Node.js backend API for managing users, organizations, and associations between them. Built with Sequelize ORM, PostgreSQL, and Express, the API provides endpoints for creating, retrieving, and managing organizations and user data securely.
+# Uriel - Organization Management API
 
-Features
-User Management:
-Create, retrieve, update, and delete users.
-Organization Management:
-Create, retrieve, and delete organizations.
-Associate users with organizations.
-Secure Authentication:
-Refresh token-based authentication.
-Access token generation using JSON Web Tokens (JWT).
-Transaction Management:
-Ensures data integrity using Sequelize transactions.
-Clean and Scalable Architecture:
-Follows MVC design pattern.
-Centralized error handling and database initialization.
-Technologies Used
-Runtime: Node.js
-Framework: Express.js
-Database: PostgreSQL
-ORM: Sequelize
-Authentication: JWT-based token system
-Deployment: Vercel (or other hosting platforms)
-Environment Management: dotenv
-Setup Instructions
-Prerequisites
-Ensure the following are installed on your system:
+Welcome to **Uriel** — a secure, modular, and scalable Node.js REST API built with **Express.js** for managing users, organizations, and authentication within your application.
 
-Node.js (v16 or higher)
-PostgreSQL
-Git
-Installation
-Clone the Repository:
+Uriel is designed to streamline user account creation, authentication, avatar uploads, and password recovery while offering a simple structure for extension and maintenance.
 
-bash
-Copy code
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
-Install Dependencies:
+---
 
-bash
-Copy code
-npm install
-Configure Environment Variables: Create a .env file in the root directory and populate it with the following variables:
+## 🚀 Features
 
-plaintext
-Copy code
-PORT=3000
-DATABASE_URL=postgres://<username>:<password>@<host>:<port>/<dbname>
-ACCESS_TOKEN_SECRET=<your-access-token-secret>
-REFRESH_TOKEN_SECRET=<your-refresh-token-secret>
-Run Database Migrations: Initialize the database with Sequelize migrations.
+- 🔐 **Authentication System** – JWT-based login, refresh, and logout flows
+- 📧 **Email Confirmation** – Verify email addresses before full access
+- 🔁 **Token Refresh** – Securely renew access tokens
+- 🧾 **User Registration** – Schema-validated user sign-up
+- 🙍 **User Management** – Retrieve, update, and manage user profiles
+- 🖼️ **Avatar Uploads** – Upload and retrieve user profile pictures
+- 🔑 **Password Recovery** – Recover forgotten passwords securely
 
-bash
-Copy code
-npx sequelize-cli db:migrate
-Start the Server:
+---
 
-bash
-Copy code
-npm start
-API Endpoints
-Authentication
-Method	Endpoint	Description
-POST	/login	Log in a user and issue tokens
-POST	/refresh-token	Generate a new access token
-User
-Method	Endpoint	Description
-GET	/users/:id	Retrieve user by ID
-GET	/users	Retrieve all users
-POST	/users	Create a new user
-PUT	/users/:id	Update user details
-DELETE	/users/:id	Delete a user
-Organization
-Method	Endpoint	Description
-GET	/organizations/:id	Retrieve organization by ID
-GET	/organizations	Retrieve all organizations
-POST	/organizations	Create a new organization
-DELETE	/organizations/:id	Delete an organization
-User-Organization Association
-Method	Endpoint	Description
-POST	/organizations/:orgId/add-user	Add a user to an organization
-Database Schema
-User Table
-Field	Type	Constraints
-userId	INTEGER	Primary key
-email	STRING	Unique, Not null
-password	STRING	Not null
-firstName	STRING	Not null
-lastName	STRING	Not null
-phone	STRING	Nullable
-refreshToken	STRING	Nullable
-Organization Table
-Field	Type	Constraints
-orgId	INTEGER	Primary key
-name	STRING	Not null
-description	STRING	Nullable
-createdBy	STRING	Not null
-UserOrganization Table
-Field	Type	Constraints
-userId	INTEGER	Foreign key (User)
-orgId	INTEGER	Foreign key (Organization)
-Project Structure
+## 📁 Project Structure
 
-src/
+```bash
+.
+├── auth/
+│   ├── RegController.js
+│   ├── confirm-email.js
+│   ├── passwordRecovery.js
 ├── controllers/
-│   ├── userController.js
-│   ├── organisationController.js
-│   └── refreshTokenController.js
-├── models/
-│   ├── user.js
-│   ├── organisation.js
-│   └── userOrganisation.js
-├── config/
-│   └── db.js
-├── middleware/
-│   └── authMiddleware.js
-├── utils/
-│   └── utility.js
-├── app.js
-├── routes.js
-└── server.js
-Contributing
-Contributions are welcome! Please follow these steps:
+│   ├── usersController.js
+│   └── organisationsController.js
+├── middlewares/
+│   ├── IsAuthenticatedMiddleware.js
+│   ├── SchemaValidationMiddleware.js
+│   ├── uploadMiddleWare.js
+│   └── isAuthourized.js
+├── routes/
+│   ├── accessTokenRoute.js
+│   ├── loginRoute.js
+│   ├── logoutRoute.js
+│   ├── regRoute.js
+│   ├── userRoutes.js
+│   └── [organisationsRoutes.js](http://_vscodecontentref_/2)
+├── schemas/
+│   ├── registerPayload.js
+│   └── organisation.js
+└── index.js
 
-Fork the repository.
-Create a new branch for your feature/bug fix:
-bash
-Copy code
-git checkout -b feature-name
-Commit and push your changes:
-bash
-Copy code
-git commit -m "Describe your changes"
-git push origin feature-name
-Open a pull request.
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+🔌 API Endpoints
+### 🧾 Authentication Routes (`/auth`)
 
-Contact
-For inquiries or support, reach out to:
+| Method | Endpoint                  | Description                              |
+|--------|---------------------------|------------------------------------------|
+| POST   | `/auth/login`             | Login with email and password            |
+| POST   | `/auth/register`          | Register a new user (with validation)    |
+| GET    | `/auth/confirmation-email`| Trigger or confirm email verification    |
+| GET    | `/auth/refresh`           | Refresh expired access tokens            |
+| POST   | `/auth/password_recovery` | Request a password reset                 |
+| POST   | `/auth/logout`
 
-Name: Josh
-Email: anaelejoshua@gmail.com
-GitHub: https://github.com/AnaeleJoshua
+### 👤 User Routes (`/users`)
+
+| Method | Endpoint                  | Description                              |
+|--------|---------------------------|------------------------------------------|
+| GET    | `/users/:id`              | Get user info by ID (protected)          |
+| PUT    | `/users/update/:id`       | Update user profile (protected)          |
+| POST   | `/users/:id/upload`       | Upload user avatar (protected)           |
+| GET    | `/users/:id/avatar`       | Get user avatar (protected)              |
+| POST   | `/users/:id/forget-password` | Simulate password recovery (logs a message) |
+
+
+### 🏢 Organisation Routes (`/organisations`)
+
+| Method | Endpoint                          | Description                                      |
+|--------|-----------------------------------|--------------------------------------------------|
+| GET    | `/organisations`                  | Retrieve all organisations (protected)          |
+| POST   | `/organisations`                  | Create a new organisation (protected)           |
+| GET    | `/organisations/:orgId`           | Get organisation details by ID (protected)      |
+| GET    | `/organisations/:orgId/allUsers`  | Get all users in an organisation (admin/owner)  |
+| POST   | `/organisations/:orgId/addUser`   | Add a user to an organisation (admin/owner)     |
+| PATCH  | `/organisations/:orgId/assign-Admin` | Assign admin role to a user (owner only)       |
+| PATCH  | `/organisations/:orgId/removeAdmin` | Remove admin role from a user (owner only)     |
+| DELETE | `/organisations/:orgId/remove-user` | Remove a user from an organisation (admin/owner) |
+| POST   | `/organisations/:orgId/leave`     | Leave an organisation (protected)               |
+
+✅ Schema Validation
+Registration is validated using a custom middleware with a JSON schema located in schemas/registerPayload.js.
+
+🛡️ Middleware Overview
+IsAuthenticatedMiddleware – Protects sensitive routes using access tokens
+
+SchemaValidationMiddleware – Ensures incoming data matches predefined schemas
+
+uploadMiddleWare – Handles multipart form data for image uploads
+
+
+📦 Getting Started
+Prerequisites
+Node.js v14+
+
+npm or yarn
+
+MongoDB or any database setup for production (adjustable)
+
+Installation
+```bash
+git clone https://github.com/your-username/uriel-api.git
+cd uriel-api
+npm install
+
+
+Running the Server
+```bash
+    npm run dev
+
+or for production:
+```bash
+    npm start
+
+
+🧪 Testing Endpoints (Optional with Postman or Swagger)
+You can test these routes using Postman or any HTTP client. Swagger documentation coming soon!
+
+✨ Contributing
+Have suggestions or want to add new features? Fork this repo and submit a pull request!
+
+📜 License
+This project is licensed under the MIT License.
+
+👨‍💻 Author
+Joshua Anaele
+Backend Developer | DevOps Enthusiast | Node.js Lover
+LinkedIn | Twitter | Portfolio
+
+🌟 Star this repo!

@@ -30,7 +30,11 @@ const UserOrganisationModel = {
 module.exports = {
   initialize: (sequelize) => {
     // Define and store the model
-    UserOrganisation = sequelize.define("userOrganisation", UserOrganisationModel);
+    UserOrganisation = sequelize.define("userOrganisation", UserOrganisationModel, {
+      tableName: "userOrganisation", // prevent Sequelize from pluralizing
+      freezeTableName: true // enforce exact name
+    });
+    
     return UserOrganisation;
   },
 };

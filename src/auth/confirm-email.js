@@ -14,6 +14,6 @@ async function confirmEmail(req,res){
     user.confirmationCode = null
     user.confirmationExpires = null
     await user.save()
-   res.sendFile(path.join(__dirname,'../../','index.html'))
+    res.sendFile(path.join(__dirname, '../../public', 'email-confirmation-success.html'));
 }
 module.exports = confirmEmail

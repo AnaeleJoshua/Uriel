@@ -35,17 +35,17 @@ const sendEmail = (to,subject,htmlContent)=>{
         html:htmlContent + `<br> <img src="cid:unique" width="400">`,
         attachments:[
             {
-                filename:'josh',
-                path:path.join(__dirname,'../','email_banner.png'),
+                filename:'uriel_bg',
+                path:path.join(__dirname,'../src/images','uriel_bg.png'),
                 contentType:'image/png',
                 cid:'unique'
         },
-            {
-                filename:'josh',
-                path:path.join(__dirname,'../','josh.png'),
-                contentType:'image/png',
+        //     {
+        //         filename:'josh',
+        //         path:path.join(__dirname,'../','josh.png'),
+        //         contentType:'image/png',
                 
-        }
+        // }
     ]
 
     }

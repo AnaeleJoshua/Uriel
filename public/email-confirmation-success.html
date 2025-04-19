@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Confirmed Successfully</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #001429;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo {
+      width: 180px;
+      height: auto;
+    }
+    
+    .card {
+      background-color: #f5f2ed;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 25px 30px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .card-header h1 {
+      color: #001429;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    
+    .card-body {
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background-color: #00E676;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+    }
+    
+    .success-icon svg {
+      width: 45px;
+      height: 45px;
+      fill: #fff;
+    }
+    
+    .success-message {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background-color: #00E676;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #00c462;
+    }
+    
+    .card-footer {
+      padding: 20px 30px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .card-footer a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    
+    .card-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      .card-header, .card-body, .card-footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      
+      .card-header h1 {
+        font-size: 22px;
+      }
+      
+      .success-icon {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .success-icon svg {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <img src="images/logo.png" alt="Company Logo" class="logo">
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h1>Email Confirmed Successfully</h1>
+      </div>
+      
+      <div class="card-body">
+        <div class="success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+        
+        <p class="success-message">
+          Thank you! Your email address has been successfully verified. Your account is now active and you can access all features of our platform.
+        </p>
+        
+        <a href="#" class="btn">Continue to Login</a>
+      </div>
+      
+      <div class="card-footer">
+        <p>Need help? <a href="help-center.html">Contact our support team</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

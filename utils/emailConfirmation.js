@@ -28,15 +28,17 @@ const sendConfirmationEmail = async (user,hostUrl)=>{
     user.confirmationCode = token
     user.confirmationExpires = expirationDate;
     await user.save()
-    // const testUrl = `http://localhost:5000/api/v1`
-
-    const confirmation_url = `${hostUrl}/auth/confirmation-email?token=${token}`
+    const confirmation_url = `${hostUrl}/api/v1/auth/confirmation-email?token=${token}`
     const data = {
         name: user.firstName,
         confirmationUrl: confirmation_url,
+        logoUrl: '../src/images/uriel.png',
+        siteUrl: 'Uriel.com',
+        User_name: user.firstName,
+        User_email: user.email,
+        companyName: 'Uriel'
     }
     const htmlContent = await renderTemplate(data)
-    console.log("htmlContent",htmlContent)
     return sendEmail(user.email,'Email Confirmation',htmlContent)
 }
 

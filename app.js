@@ -20,6 +20,9 @@ const path = require('path')
 // Middleware import
 const errorHandler = require('./src/middlewares/errorHandler');
 
+// Middleware to serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Custom middleware logger
 app.use(logger);
 
@@ -56,7 +59,6 @@ app.use(cookieParser());
     app.get("/", (req, res) =>  res.send('welcome to Uriel'));
     app.get("/avatar", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
-    app.use("/auth", require('./src/routes/authRoute'));
     app.use("/api/users", require("./src/routes/userRoutes"));
     app.use("/api/organisations", require("./src/routes/organisationsRoutes"));
 
