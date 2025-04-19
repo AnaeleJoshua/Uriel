@@ -28,7 +28,11 @@ const OrganisationModel = {
 module.exports = {
   initialize: (sequelize) => {
     // Define and store the model
-    Organisation = sequelize.define("organisation", OrganisationModel);
+    Organisation = sequelize.define("organisation", OrganisationModel,{
+      tableName: "organisation", // prevent Sequelize from pluralizing
+      freezeTableName: true // enforce exact name
+    });
+    
     return Organisation;
   },
 };
