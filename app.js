@@ -9,7 +9,7 @@ const morgan = require("morgan");
 // const swaggerUI = require('swagger-ui-express');
 // const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
-const { logger } = require('./src/middlewares/logEvents');
+// const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
 const path = require('path')
@@ -24,7 +24,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Custom middleware logger
-app.use(logger);
+// app.use(logger);
 
 // Handle options credentials check - before CORS and fetch cookies credentials requirement
 app.use(credentials);
