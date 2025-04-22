@@ -63,7 +63,7 @@ module.exports = {
   initialize: (sequelize) => {
     // Define the model and store it
     User = sequelize.define("user", UserModel,{
-      tableName: "user", // prevent Sequelize from pluralizing
+      tableName: "user_account", // prevent Sequelize from pluralizing
       freezeTableName: true // enforce exact name
     });
     return User;
