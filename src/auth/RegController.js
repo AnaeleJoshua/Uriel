@@ -83,7 +83,7 @@ const handleRegister = async (req, res) => {
       await transaction.commit();
 
       // Set the refresh token as an HTTP-only cookie
-      res.cookie("jwt", refreshToken, {
+      res.cookie("refresh-token", refreshToken, {
         httpOnly: true,
         sameSite: "None",
         secure: true,
