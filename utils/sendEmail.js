@@ -3,33 +3,37 @@ const path = require('path')
 
 //set up mail transport 
 require('dotenv').config();
-console.log({
-    MAIL_HOST: process.env.MAIL_HOST,
-    MAIL_PORT: process.env.MAIL_PORT,
-    MAIL_SECURE: process.env.MAIL_SECURE,
-    EMAIL: process.env.EMAIL_CONFIG_EMAIL
-  });
-  
+
+// const transporter = nodemailer.createTransport({
+//     // service: process.env.MAIL_TRANSPORTER,
+//     host: process.env.MAIL_HOST,
+//     port: parseInt(process.env.MAIL_PORT),
+//     secure: process.env.MAIL_SECURE === 'true', // true for 465, false for other ports
+//     auth:{
+//         user:process.env.EMAIL_CONFIG_EMAIL,
+//         pass:process.env.EMAIL_CONFIG_PASSWORD
+//     }
+   
+
+// })
 
 const transporter = nodemailer.createTransport({
-    // service: process.env.MAIL_TRANSPORTER,
     host: process.env.MAIL_HOST,
     port: parseInt(process.env.MAIL_PORT),
     secure: process.env.MAIL_SECURE === 'true', // true for 465, false for other ports
-    auth:{
-        user:process.env.EMAIL_CONFIG_EMAIL,
-        pass:process.env.EMAIL_CONFIG_PASSWORD
+    auth: {
+        user: process.env.USERNAME,
+        pass: process.env.SENDGRID_API_KEY,
     }
-   
-
 })
 
 //function to send mail
+// {
+        //    name:'Uriel',
+        //    address: process.env.EMAIL_CONFIG_EMAIL,}
 const sendEmail = (to,subject,htmlContent)=>{
     const mailOptions ={
-        from:{
-           name:'Uriel',
-           address: process.env.EMAIL_CONFIG_EMAIL,},
+        from:  '"Josh 👨🏽‍💻" <anaelejoshua@gmail.com>',
         to,
         subject,
         html:htmlContent + `<br> <img src="cid:unique" width="400">`,
