@@ -6,7 +6,7 @@ const handleRefresh = async (req, res) => {
   try {
     const { User } = await dbInitialization;
     // Check for cookies containing the JWT
-    const tokenFromCookie = req.cookies?.jwt;
+    const tokenFromCookie = req.cookies?["refresh-token"] : null;
     if (!tokenFromCookie) {
       return res.status(401).json({
         status: "Unauthorized",
