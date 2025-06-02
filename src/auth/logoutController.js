@@ -11,6 +11,7 @@ const logOut = async (req,res) => {
         const { cookies: { ['refresh-token']: refreshToken }, user: { userId } } = req;
  //destruct jwt and userId from req object
         console.log("userId",userId)
+        console.log("refreshToken",refreshToken)
         if (!refreshToken || !userId) {
             console.log("No refresh token or userId found in request");
             return res.status(400).json({status:'failed',
