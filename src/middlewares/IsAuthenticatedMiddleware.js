@@ -51,7 +51,7 @@ console.log("jwt:",process.env.ACCESS_TOKEN_SECRET)
           }
     
           req.user = user // Save the user object for further use
-        // console.log(user)
+        console.log(user)
           next();
     })
     // console.log(verified)
