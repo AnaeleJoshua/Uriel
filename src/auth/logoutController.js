@@ -10,8 +10,9 @@ const logOut = async (req,res) => {
         const {User} = await dbInitialization
         const { cookies: { ['refresh-token']: refreshToken }, user: { userId } } = req;
  //destruct jwt and userId from req object
-        console.log("userI",userId)
-        if (!jwt){
+        console.log("userId",userId)
+        if (!refreshToken || !userId) {
+            console.log("No refresh token or userId found in request");
             return res.status(400).json({status:'failed',
                 'message':'invalid request'
             })
@@ -24,7 +25,7 @@ const logOut = async (req,res) => {
         }
         // console.log(updateRow)
         // Set the refresh token as an HTTP-only cookie
-      res.clearCookie("jwt", {
+      res.clearCookie("refresh-token", {
         httpOnly: true,
         sameSite: "None",
         secure: true,
