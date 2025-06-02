@@ -8,7 +8,8 @@ const getSequelizeInstance = require('../../config/db');
 const logOut = async (req,res) => {
     try{
         const {User} = await dbInitialization
-        const {cookies:{jwt},user:{userId}} = req //destruct jwt and userId from req object
+        const { cookies: { ['refresh-token']: refreshToken }, user: { userId } } = req;
+ //destruct jwt and userId from req object
         console.log("userI",userId)
         if (!jwt){
             return res.status(400).json({status:'failed',
