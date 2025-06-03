@@ -40,7 +40,7 @@ module.exports = {
     }
 console.log("jwt:",process.env.ACCESS_TOKEN_SECRET)
 
-    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,{algorithms:['HS256']},(err,user)=>{
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,{algorithms:['HS256'],clockTolerance: 5},(err,user)=>{
        
       if (err) {
             return res.status(403).json({

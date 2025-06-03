@@ -10,7 +10,9 @@ const genrateToken = (payload,secret,expiresIn) => {
 const generateAccessToken = (email, userId) => {
     const payload = {email,userId}
     const secret =process.env.ACCESS_TOKEN_SECRET;
-    const expiration = process.env.JWT_ACCESS_EXPIRATION || '30s'
+    const expiration = process.env.JWT_ACCESS_EXPIRATION || '120s'
+    console.log('Token will expire in:', process.env.JWT_ACCESS_EXPIRATION);
+
     return genrateToken(payload,secret,expiration) 
   };
 // Generates an refresh Token using username and userId for the user's authentication
