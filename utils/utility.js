@@ -10,7 +10,7 @@ const genrateToken = (payload,secret,expiresIn) => {
 const generateAccessToken = (email, userId) => {
     const payload = {email,userId}
     const secret =process.env.ACCESS_TOKEN_SECRET;
-    const expiration = process.env.JWT_ACCESS_EXPIRATION || '120s'
+    const expiration = Number(process.env.JWT_ACCESS_EXPIRATION) || 120; // in seconds
     console.log('Token will expire in:', process.env.JWT_ACCESS_EXPIRATION);
 
     return genrateToken(payload,secret,expiration) 
