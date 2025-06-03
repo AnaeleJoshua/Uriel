@@ -23,7 +23,9 @@ const renderTemplate = (data) => {
 async function sendPasswordResetMail(req,res){
     const {User} = await dbInitialization
     const email = req.body.email
+    console.log('change password email',email)
     const user = await User.findOne({where:{email}})
+    console.log(user)
     if(!user) return res.status(400).send('invalid email')
     const token = generateRandomToken()
     const expirationDate = new Date()
