@@ -5,7 +5,7 @@ const logout = require("../auth/logoutController");
 
   // [SchemaValidationMiddleware.verify(loginPayload)]
   router.post(
-    "/",logout
+    "/",[isAuthenticated.check],logout
   );
 
 module.exports = router
