@@ -11,7 +11,11 @@ module.exports = {
     console.log(`userId: ${id}`)
     const sequelize = await getSequelizeInstance()
     const transaction = await sequelize.transaction()
-        let user = await User.findOne({userId:id},{transaction})
+        let user = await User.findOne({
+  where: { userId: id },
+  transaction
+});
+
         if(!user){
             await transaction.rollback()
             return res.status(401).json({

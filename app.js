@@ -59,8 +59,6 @@ app.use(cookieParser());
     app.get("/", (req, res) =>  res.send('welcome to Uriel'));
     app.get("/avatar", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
-    app.use("/api/users", require("./src/routes/userRoutes"));
-    app.use("/api/organisations", require("./src/routes/organisationsRoutes"));
 
     // Error handler middleware
     app.use(errorHandler);
