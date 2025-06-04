@@ -69,7 +69,7 @@ const handleRegister = async (req, res) => {
       const baseUrl = `${req.protocol}://${req.get('host')}`
       console.log("baseUrl",baseUrl)
       console.log("newUser",newUser)
-      const sentEmail = sendConfirmationEmail(newUser,baseUrl)
+      const sentEmail = await sendConfirmationEmail(newUser,baseUrl)
       if(!sentEmail){
         return res.status(500).json({
           status: "error",
