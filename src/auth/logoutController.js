@@ -2,7 +2,7 @@ const dbInitialization = require("../models/modelInit");
 
 const logOut = async (req, res) => {
   try {
-    const { User } = dbInitialization;
+    const { User } = await dbInitialization;
     const { cookies: { ['refresh-token']: refreshToken }, user: { userId } } = req;
 
     console.log("userId", userId);
