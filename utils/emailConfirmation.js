@@ -19,16 +19,21 @@ const renderTemplate = (data) => {
         });
     });
 }
-const sendConfirmationEmail = async (user,hostUrl)=>{
+const sendConfirmationEmail = async (user,hostUrl,transaction)=>{
     const token = generateRandomToken()
     const expirationDate = new Date()
     expirationDate.setHours(expirationDate.getHours() + 24)
-    console.log("user-here",user)
+   
     //save token and expiration to db
     user.confirmationCode = token
     user.confirmationExpires = expirationDate;
-    await user.save()
-    const confirmation_url = `${hostUrl}/api/v1/auth/confirmation-email?token=${token}`
+    console.log("user.confirmationCode",user.confirmationCode)
+    await user.update({
+  confirmationCode: token,
+  confirmationExpires: expirationDate
+},{transaction})
+     console.log("user-here",user)
+    const confirmation_url = `${hostUrl}/api/v1/auth/confirm-email?token=${token}`
     const data = {
         name: user.firstName,
         confirmationUrl: confirmation_url,
@@ -40,7 +45,12 @@ const sendConfirmationEmail = async (user,hostUrl)=>{
     }
     console.log("data",data)
     const htmlContent = await renderTemplate(data)
-    return sendEmail(user.email,'Email Confirmation',htmlContent)
+    return {
+  sent: await sendEmail(user.email, 'Email Confirmation', htmlContent),
+  code: token,
+    expiration: expirationDate
+};
+
 }
 
 module.exports = sendConfirmationEmail

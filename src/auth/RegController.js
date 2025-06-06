@@ -10,13 +10,11 @@ const handleRegister = async (req, res) => {
 
     const payload = req.body;
     const payloadEmail = payload.email;
-    console.log("Payload email:", payloadEmail);
-    console.log("Payload pass:", payload.password);
 
     // Start a database transaction
     const sequelize = User.sequelize; // Get Sequelize instance from the User model
     const transaction = await sequelize.transaction();
-    console.log(UserOrganisation.getTableName());
+    
 
     try {
       // Check if the user already exists
@@ -31,7 +29,8 @@ const handleRegister = async (req, res) => {
       }
       // Encrypt the user's password
       const encryptedPassword = await encryptPassword(payload.password);
-      console.log(encryptedPassword)
+      
+      
       // Create a new user with the encrypted password
       const newUser = await User.create(
         {
@@ -51,6 +50,9 @@ const handleRegister = async (req, res) => {
         },
         { transaction }
       );
+      // Generate access and refresh tokens
+      const accessToken = generateAccessToken(payloadEmail, newUser.userId);
+      const refreshToken = generateRefreshToken(payloadEmail, newUser.userId);
 
       // Associate the user with the organization
       await newUser.addOrganisation(newOrganisation, { transaction });
@@ -58,20 +60,14 @@ const handleRegister = async (req, res) => {
 
       // await newUser.addUserOrganisation(,{transaction})
 
-      // Generate access and refresh tokens
-      const accessToken = generateAccessToken(payloadEmail, newUser.userId);
-      const refreshToken = generateRefreshToken(payloadEmail, newUser.userId);
 
       // Update the user with the refresh token
       await newUser.update({ refreshToken }, { transaction });
 
       //email confirmation
       const baseUrl = `${req.protocol}://${req.get('host')}`
-      console.log("baseUrl",baseUrl)
-      console.log("newUser",newUser)
-      const sentEmail = await sendConfirmationEmail(newUser,baseUrl)
-      console.log("sentEmail",sentEmail)
-      if(!sentEmail){
+      const {sent,code,expiration} = await sendConfirmationEmail(newUser,baseUrl,transaction)
+      if(!sent){
         await transaction.rollback();
         return res.status(500).json({
           status: "error",
@@ -80,9 +76,13 @@ const handleRegister = async (req, res) => {
         });
       }
 
+      await newUser.update({ confirmationCode: code,confirmationExpires:expiration }, { transaction }); // 
+  
 
       // Commit the transaction
       await transaction.commit();
+const confirmedUser = await User.findOne({ where: { userId: newUser.userId } });
+console.log("Confirmation code in DB:", confirmedUser.confirmationCode);
 
       // Set the refresh token as an HTTP-only cookie
       res.cookie("refresh-token", refreshToken, {
