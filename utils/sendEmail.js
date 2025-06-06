@@ -25,15 +25,15 @@ const sendEmail = async (to, subject, htmlContent) => {
             </div>
             <div>${htmlContent}</div>
         `,
-        attachments: [
-            {
-                content: fileContent,
-                filename: 'uriel_bg.png',
-                type: 'image/png',
-                disposition: 'inline',
-                content_id: 'bannerImage'
-            }
-        ]
+        // attachments: [
+        //     {
+        //         content: fileContent,
+        //         filename: 'uriel_bg.png',
+        //         type: 'image/png',
+        //         disposition: 'inline',
+        //         content_id: 'bannerImage'
+        //     }
+        // ]
     };
 
     try {
