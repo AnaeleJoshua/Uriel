@@ -6,19 +6,22 @@ const fs = require('fs');
 
 //set up mail transport 
 require('dotenv').config();
+const baseUrl = process.env.APP_BASE_URL || 'localhost:3000'; // Default to localhost if BASE_URL is not set
+console.log("baseUrl:",baseUrl)
 const filePath = path.join(__dirname, '../src/images/uriel_bg.png');
 console.log("image filePath:",filePath)
 // Read the file and convert it to base64
 const fileContent = fs.readFileSync(filePath).toString('base64');
-
+const imageUrl = `${baseUrl}/images/uriel_bg.png`;
 const sendEmail = async (to, subject, htmlContent) => {
     const mailOptions = {
         from: '"Josh from Uriel 👨🏽‍💻" <anaelejoshua@gmail.com>',
         to,
         subject,
         html: `
+        
             <div style="text-align: center;">
-                <img src="cid:bannerImage" width="100%" alt="Banner Image" style="max-width: 600px;" />
+                   <img src="${imageUrl}" alt="Banner" style="width: 100%; max-width: 600px;" />
             </div>
             <div>${htmlContent}</div>
         `,

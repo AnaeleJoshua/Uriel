@@ -14,6 +14,6 @@ router.use("/new-access-token", newAccessToken);
 router.use("/logout", logoutRoute);
 router.post("/reset-password", sendPasswordResetMail);
 router.get("/reset-password/confirm", confirmPassword);
-router.get('/confirmation-email',confirmEmail)
+router.get('/confirm-email',confirmEmail)
 
 module.exports = router;

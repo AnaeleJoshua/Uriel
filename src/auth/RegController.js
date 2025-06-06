@@ -25,7 +25,7 @@ const handleRegister = async (req, res) => {
         await transaction.rollback();
         return res.status(400).json({
           status: "Bad request",
-          message: "Email already exists",
+          message: "User already exists",
           statusCode: 400,
         });
       }
