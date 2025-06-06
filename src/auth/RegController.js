@@ -71,6 +71,7 @@ const handleRegister = async (req, res) => {
       console.log("newUser",newUser)
       const sentEmail = await sendConfirmationEmail(newUser,baseUrl)
       if(!sentEmail){
+        await transaction.rollback();
         return res.status(500).json({
           status: "error",
           message: "Failed to send confirmation email",

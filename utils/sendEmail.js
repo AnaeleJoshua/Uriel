@@ -20,7 +20,7 @@ require('dotenv').config();
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: parseInt(process.env.MAIL_PORT),
-    secure: process.env.MAIL_SECURE === 'true', // true for 465, false for other ports
+    secure: process.env.MAIL_SECURE , // true for 465, false for other ports
     auth: {
         user: process.env.USERNAME,
         pass: process.env.SENDGRID_API_KEY,
