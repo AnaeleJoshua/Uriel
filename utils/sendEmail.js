@@ -2,72 +2,48 @@
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const path = require('path')
+const fs = require('fs');
 
 //set up mail transport 
 require('dotenv').config();
+const filePath = path.join(__dirname, '../src/images/uriel_bg.png');
+console.log("image filePath:",filePath)
+// Read the file and convert it to base64
+const fileContent = fs.readFileSync(filePath).toString('base64');
 
-
-// const transporter = nodemailer.createTransport({
-//     host: process.env.MAIL_HOST,
-//     port: parseInt(process.env.MAIL_PORT),
-//     secure: process.env.MAIL_SECURE , // true for 465, false for other ports
-//     auth: {
-//         user: process.env.USERNAME,
-//         pass: process.env.SENDGRID_API_KEY,
-//     }
-// })
-
-//function to send mail
-// {
-        //    name:'Uriel',
-        //    address: process.env.EMAIL_CONFIG_EMAIL,}
-const sendEmail = (to,subject,htmlContent)=>{
-    const mailOptions ={
-        from:  '"Josh from Uriel 👨🏽‍💻" <anaelejoshua@gmail.com>',
+const sendEmail = (to, subject, htmlContent) => {
+    const mailOptions = {
+        from: '"Josh from Uriel 👨🏽‍💻" <anaelejoshua@gmail.com>',
         to,
         subject,
-        html:htmlContent + `<br> <img src="cid:unique" width="400">`,
-        attachments:[
+        html: `
+            <div style="text-align: center;">
+                <img src="cid:bannerImage" width="100%" alt="Banner Image" style="max-width: 600px;" />
+            </div>
+            <div>${htmlContent}</div>
+        `,
+        attachments: [
             {
-                filename:'uriel_bg',
-                path:path.join(__dirname,'../src/images','uriel_bg.png'),
-                contentType:'image/png',
-                cid:'unique'
-        },
-        //     {
-        //         filename:'josh',
-        //         path:path.join(__dirname,'../','josh.png'),
-        //         contentType:'image/png',
-                
-        // }
-    ]
+                content: fileContent,
+                filename: 'uriel_bg.png',
+                type: 'image/png',
+                disposition: 'inline',
+                content_id: 'bannerImage'
+            }
+        ]
+    };
 
-    }
-    // console.log("html",mailOptions.html)
-    // console.log("filepath",mailOptions.attachments[0].path)
-return sgMail.send(mailOptions)
-.then((info) => {
-    console.log('Email sent:', info.response);      
+    return sgMail.send(mailOptions)
+        .then((info) => {
+            console.log('Email sent:', info);
+        })
+        .catch((error) => {
+            console.error('Error sending email:', error);
+        });
+};
 
-}  )
-.catch((error) => {
-    console.error('Error sending email:', error);
-});
-}
-// sendEmail('anaelejoshua0508@gmail.com','test','<h1>hello</h1>')
-//     .then((info) => {
-//         console.log('Email sent:', info.response);
-//     })
-//     .catch((error) => {
-//         console.error('Error sending email:', error);
-//     });
-    // return transporter.sendMail(mailOptions)
-    // .then((info) => {
-    //     console.log('Email sent:', info.response);
-    // })
-    // .catch((error) => {
-    //     console.error('Error sending email:', error);
-    // });
+
+
 
 module.exports = sendEmail
 
