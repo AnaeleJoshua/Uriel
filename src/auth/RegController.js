@@ -70,6 +70,7 @@ const handleRegister = async (req, res) => {
       console.log("baseUrl",baseUrl)
       console.log("newUser",newUser)
       const sentEmail = await sendConfirmationEmail(newUser,baseUrl)
+      console.log("sentEmail",sentEmail)
       if(!sentEmail){
         await transaction.rollback();
         return res.status(500).json({

@@ -11,7 +11,7 @@ console.log("image filePath:",filePath)
 // Read the file and convert it to base64
 const fileContent = fs.readFileSync(filePath).toString('base64');
 
-const sendEmail = (to, subject, htmlContent) => {
+const sendEmail = async (to, subject, htmlContent) => {
     const mailOptions = {
         from: '"Josh from Uriel 👨🏽‍💻" <anaelejoshua@gmail.com>',
         to,
@@ -33,13 +33,14 @@ const sendEmail = (to, subject, htmlContent) => {
         ]
     };
 
-    return sgMail.send(mailOptions)
-        .then((info) => {
-            console.log('Email sent:', info);
-        })
-        .catch((error) => {
-            console.error('Error sending email:', error);
-        });
+    try {
+    const [response] = await sgMail.send(mailOptions);
+    console.log('✅ Email sent. Status code:', response.statusCode);
+    return response.statusCode === 202; // Only return true if SendGrid accepted the request
+  } catch (error) {
+    console.error('❌ Failed to send email:', error.response?.body || error.message);
+    return false;
+  }
 };
 
 
