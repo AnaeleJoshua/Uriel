@@ -2,7 +2,7 @@
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const path = require('path')
-const fs = require('fs');
+// const fs = require('fs');
 
 //set up mail transport 
 require('dotenv').config();
@@ -11,7 +11,7 @@ console.log("baseUrl:",baseUrl)
 const filePath = path.join(__dirname, '../src/images/uriel_bg.png');
 console.log("image filePath:",filePath)
 // Read the file and convert it to base64
-const fileContent = fs.readFileSync(filePath).toString('base64');
+// const fileContent = fs.readFileSync(filePath).toString('base64');
 const imageUrl = `${baseUrl}/images/uriel_bg.png`;
 const sendEmail = async (to, subject, htmlContent) => {
     const mailOptions = {
