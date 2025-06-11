@@ -8,7 +8,7 @@ const OrganisationModel = {
     autoIncrement: true,
     primaryKey: true,
   },
-  name: {
+  orgName: {
     type: DataTypes.STRING,
     allowNull: false,
   },

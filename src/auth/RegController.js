@@ -1,23 +1,21 @@
 const dbInitialization = require("../models/modelInit");
 const { generateAccessToken, generateRefreshToken, encryptPassword } = require('../../utils/utility');
-const organisation = require("../schemas/organisation");
-const sendConfirmationEmail = require('../../utils/emailConfirmation')
+const sendConfirmationEmail = require('../../utils/emailConfirmation');
 
 const handleRegister = async (req, res) => {
   try {
-    // Ensure models and sequelize instance are loaded
-    const { User, Organisation,UserOrganisation } = await dbInitialization;
+    // Load sequelize and models
+    const { sequelize, models } = await dbInitialization;
+    const { User, Organisation, UserOrganisation } = models;
 
     const payload = req.body;
     const payloadEmail = payload.email;
 
-    // Start a database transaction
-    const sequelize = User.sequelize; // Get Sequelize instance from the User model
+    // Start transaction
     const transaction = await sequelize.transaction();
-    
 
     try {
-      // Check if the user already exists
+      // Check if user exists
       const existingUser = await User.findOne({ where: { email: payloadEmail }, transaction });
       if (existingUser) {
         await transaction.rollback();
@@ -27,47 +25,43 @@ const handleRegister = async (req, res) => {
           statusCode: 400,
         });
       }
-      // Encrypt the user's password
-      const encryptedPassword = await encryptPassword(payload.password);
-      
-      
-      // Create a new user with the encrypted password
-      const newUser = await User.create(
-        {
-          ...payload,
-          password: encryptedPassword,
-        },
-        { transaction }
-      );
 
-      // Create a new organization for the user
-      const newOrganisation = await Organisation.create(
-        {
-          name: `${newUser.firstName}'s Organisation`,
-          description: `${newUser.firstName}'s organisation`,
-          createdBy: `${newUser.firstName} ${newUser.lastName}`,
-          ownerId: newUser.userId
-        },
-        { transaction }
-      );
-      // Generate access and refresh tokens
+      // Encrypt password
+      const encryptedPassword = await encryptPassword(payload.password);
+
+      // Create user
+      const newUser = await User.create({
+        ...payload,
+        password: encryptedPassword,
+      }, { transaction });
+
+      // Create organisation
+      const newOrganisation = await Organisation.create({
+        orgName: `${newUser.firstName}'s Organisation`,
+        description: `${newUser.firstName}'s organisation`,
+        createdBy: `${newUser.firstName} ${newUser.lastName}`,
+        ownerId: newUser.userId
+      }, { transaction });
+
+      // Add user-organisation association with role
+      await UserOrganisation.create({
+        userId: newUser.userId,
+        orgId: newOrganisation.orgId,
+        role: "owner"
+      }, { transaction });
+
+      // Generate tokens
       const accessToken = generateAccessToken(payloadEmail, newUser.userId);
       const refreshToken = generateRefreshToken(payloadEmail, newUser.userId);
 
-      // Associate the user with the organization
-      await newUser.addOrganisation(newOrganisation, { transaction });
-        //update role in organisation to owner
-
-      // await newUser.addUserOrganisation(,{transaction})
-
-
-      // Update the user with the refresh token
+      // Save refresh token
       await newUser.update({ refreshToken }, { transaction });
 
-      //email confirmation
-      const baseUrl = `${req.protocol}://${req.get('host')}`
-      const {sent,code,expiration} = await sendConfirmationEmail(newUser,baseUrl,transaction)
-      if(!sent){
+      // Email confirmation
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const { sent, code, expiration } = await sendConfirmationEmail(newUser, baseUrl, transaction);
+
+      if (!sent) {
         await transaction.rollback();
         return res.status(500).json({
           status: "error",
@@ -76,23 +70,18 @@ const handleRegister = async (req, res) => {
         });
       }
 
-      await newUser.update({ confirmationCode: code,confirmationExpires:expiration }, { transaction }); // 
-  
+      await newUser.update({ confirmationCode: code, confirmationExpires: expiration }, { transaction });
 
-      // Commit the transaction
       await transaction.commit();
-const confirmedUser = await User.findOne({ where: { userId: newUser.userId } });
-console.log("Confirmation code in DB:", confirmedUser.confirmationCode);
 
-      // Set the refresh token as an HTTP-only cookie
+      // Set HTTP-only cookie
       res.cookie("refresh-token", refreshToken, {
         httpOnly: true,
         sameSite: "None",
         secure: true,
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 24 * 60 * 60 * 1000,
       });
 
-      // Send a success response
       return res.status(201).json({
         status: "success",
         message: "Registration successful",
@@ -105,18 +94,16 @@ console.log("Confirmation code in DB:", confirmedUser.confirmationCode);
             email: newUser.email,
             phone: newUser.phone,
             organisation_name: newOrganisation.name,
-            organisation_id:newOrganisation.orgId,
-            email_status: 'check your email for a confirmation mail'
+            organisation_id: newOrganisation.orgId,
+            email_status: 'Check your email for a confirmation mail',
           },
         },
       });
     } catch (error) {
-      // Rollback the transaction if an error occurs
       await transaction.rollback();
       throw error;
     }
   } catch (error) {
-    // Handle errors and send an appropriate response
     console.error("Registration error:", error.message);
     return res.status(500).json({
       status: "error",

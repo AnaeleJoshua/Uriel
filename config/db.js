@@ -1,47 +1,54 @@
-const { Sequelize} = require("sequelize");
-require('dotenv').config()
+const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
-let sequelizeInstance
+let sequelizeInstance;
 
-const initializeSequelize = async ()=>{
-  try{
-    if(!sequelizeInstance){
-      console.log("Initiallizing new database connection ...")
-      if (process.env.NODE_ENV === "production"){
-        sequelizeInstance = new Sequelize(process.env.DATABASE_URL,{
+const initializeSequelize = async () => {
+  try {
+    if (!sequelizeInstance) {
+      if (process.env.NODE_ENV === "production") {
+        // ✅ Production: use connection string
+        sequelizeInstance = new Sequelize(process.env.DATABASE_URL, {
           dialect: "postgres",
-          dialectModule : require("pg"),
-          protocol: "postgres",
-          logging:false,
-        })
-      }else {
-         sequelizeInstance = new Sequelize(process.env.DATABASE_NAME,process.env.DB_USERNAME, process.env.DB_PASSWORD,{
-          host:"localhost",
-          dialect: "postgres",
-          logging: console.log
-         }) 
+          dialectOptions: {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false, // for Vercel/Neon/etc.
+            },
+          },
+          logging: false,
+        });
+      } else {
+        // ✅ Development: use individual credentials
+        sequelizeInstance = new Sequelize(
+          process.env.DATABASE_NAME || "uriel_db_dev",
+          process.env.DB_USERNAME || "postgres",
+          process.env.DB_PASSWORD || "postgres",
+          {
+            host: process.env.DB_HOST || "127.0.0.1",
+            dialect: "postgres",
+            logging: false,
+          }
+        );
       }
-      //test the connection
-    await sequelizeInstance.authenticate();
-    console.log(await sequelizeInstance.getQueryInterface().showAllSchemas());
 
-    console.log("Database connection established successfully")
+      await sequelizeInstance.authenticate();
+      console.log("DB connected");
     }
-    return sequelizeInstance
-    
 
-  }catch(err){
-    console.error("Unable to connect to the database",err);
+    return sequelizeInstance;
+  } catch (err) {
+    console.error("Unable to connect to the database", err);
     throw err;
   }
-}
+};
 
-//Export the function to retrieve connection
-const getSequelizeInstance = async() => {
-  return await initializeSequelize()
-}
+const getSequelizeInstance = async () => {
+  return await initializeSequelize();
+};
 
-module.exports = getSequelizeInstance
+module.exports = getSequelizeInstance;
+
 
 
 

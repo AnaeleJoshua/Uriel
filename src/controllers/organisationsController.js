@@ -1,19 +1,18 @@
 const dbInitialization = require("../models/modelInit");
-const getSequelizeInstance = require("../../config/db");
-const Organisation = require( "../models/Organisation" );
+// Removed getSequelizeInstance import
+
 
 module.exports = {
   // Get organization by ID
   getOrganisationById: async (req, res) => {
-    const { Organisation } = await dbInitialization;
-    const sequelize = await getSequelizeInstance();
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
     const transaction = await sequelize.transaction();
     try {
       const { id } = req.params;
 
       const organisation = await Organisation.findOne(
-        { where: { orgId: id } },
-        { transaction }
+        { where: { orgId: id }, transaction } // transaction should be in options object here
       );
 
       if (!organisation) {
@@ -42,14 +41,14 @@ module.exports = {
   // Get all organizations associated with a user
   getAllOrganisation: async (req, res) => {
     const userId = req.user.userId;
-    const { Organisation, User } = await dbInitialization;
-    const sequelize = await getSequelizeInstance();
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { User } = models; // Destructure User from models
     const transaction = await sequelize.transaction();
 
     try {
       const userOrganisations = await Organisation.findAll(
-        { include: [{ model: User, where: { userId } }] },
-        { transaction }
+        { include: [{ model: User, where: { userId } }], transaction }
       );
 
       if (!userOrganisations.length) {
@@ -80,14 +79,16 @@ module.exports = {
 
   // Create a new organization
   newOrganisation: async (req, res) => {
-    const { Organisation, User, UserOrganisation } = await dbInitialization;
-    const sequelize = await getSequelizeInstance();
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { UserOrganisation } = models; // Destructure UserOrganisation from models
+    const { User } = models; // Destructure User from models
     const transaction = await sequelize.transaction();
     const payload = req.body;
     const userId = req.user.userId;
 
     try {
-      const user = await User.findOne({ where: { userId } }, { transaction });
+      const user = await User.findOne({ where: { userId }, transaction });
 
       if (!user) {
         await transaction.rollback();
@@ -132,14 +133,22 @@ module.exports = {
   addUserToOrganisation: async (req, res) => {
     const { orgId } = req.params;
     const { userId } = req.body;
-    const { Organisation, UserOrganisation } = await dbInitialization;
-    const sequelize = await getSequelizeInstance();
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { UserOrganisation } = models; // Destructure UserOrganisation from models
+    const { User } = models; // Destructure User from models
+    // Start a transaction
+    if (!userId) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "User ID is required",
+      });
+    }
     const transaction = await sequelize.transaction();
 
     try {
       const organisation = await Organisation.findOne(
-        { where: { orgId } },
-        { transaction }
+        { where: { orgId }, transaction }
       );
 
       if (!organisation) {
@@ -166,18 +175,26 @@ module.exports = {
       });
     }
   },
+
   // remove a user from an organization
   removeUserFromOrganisation: async (req, res) => {
     const { orgId } = req.params;
     const { userId } = req.body;
-    const {UserOrganisation } = await dbInitialization;
-    const sequelize = await getSequelizeInstance();
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { UserOrganisation } = models; // Destructure UserOrganisation from models
+    // Start a transaction
+    if (!userId) {
+      return res.status(400).json({
+        status: "Bad Request",
+        message: "User ID is required",
+      });
+    }
     const transaction = await sequelize.transaction();
 
     try {
-       const user = await UserOrganisation.findOne(
-        { where: { userId, orgId } },
-        { transaction }
+      const user = await UserOrganisation.findOne(
+        { where: { userId, orgId }, transaction }
       );
       if (!user) {
         await transaction.rollback();
@@ -187,12 +204,11 @@ module.exports = {
         });
       }
       const organisation = await Organisation.findOne(
-        { where: { orgId } },
-        { transaction }
+        { where: { orgId }, transaction }
       );
       if (!organisation) {
         await transaction.rollback();
-        return res.status(404).json({   
+        return res.status(404).json({
           status: "Not Found",
           message: "Organization not found",
         });
@@ -205,73 +221,76 @@ module.exports = {
           message: "Owner cannot be removed from the organization",
         });
       }
-    
-      //admin can be removed by owner
+
       // Remove the user from the organization
       await UserOrganisation.destroy(
-        { where: { userId, orgId } },
-        { transaction }
+        { where: { userId, orgId }, transaction }
       );
 
+      await transaction.commit();
       return res.status(200).json({
         status: "success",
         message: "User removed successfully",
       });
-      }
-    catch (error) {
+    } catch (error) {
       if (transaction) await transaction.rollback();
       console.error("Error removing user from organization:", error.message);
       return res.status(500).json({
         status: "error",
-        message: "Failed to remove the user to the organization",
+        message: "Failed to remove the user from the organization",
       });
     }
   },
 
-  //get all users in an organisation
-  getAllOrganisationUsers:async (req,res) => {
-      const {orgId} = req.params
-      try{
-        const organisationUsers = await User.findAll(
-          { include: [{ model: Organisation, where: { orgId } }] },
-        );
-        if (!organisationUsers.length) {
-          return res.status(404).json({
-            status: "Not Found",
-            message: "No user found for this organisation",
-          });
-        }
-
-        return res.status(200).json({
-          status: "success",
-          data: organisationUsers.map((user) => ({
-            userId: user.userId,
-            name: user.name,
-          })),
+  // get all users in an organisation
+  getAllOrganisationUsers: async (req, res) => {
+    const { orgId } = req.params;
+    const { models, sequelize } = await dbInitialization;
+    const { User } = models; // Destructure User from models
+    // Start a transaction
+    const { Organisation } = models; // Destructure Organisation from models
 
 
-      })
+    try {
+      const organisationUsers = await User.findAll(
+        { include: [{ model: Organisation, where: { orgId } }] },{transaction: sequelize.transaction() }
+      );
+      if (!organisationUsers.length) {
+        return res.status(404).json({
+          status: "Not Found",
+          message: "No user found for this organisation",
+        });
+      }
 
-    }catch(error){
-      console.error("Error adding user to organization:", error.message);
+      return res.status(200).json({
+        status: "success",
+        data: organisationUsers.map((user) => ({
+          userId: user.userId,
+          name: user.name,
+        })),
+      });
+    } catch (error) {
+      console.error("Error fetching users for organization:", error.message);
       return res.status(500).json({
         status: "error",
-        message: "Failed to add the user to the organization",
+        message: "Failed to retrieve users for the organization",
       });
     }
   },
 
-  //add an admin to organisation
-  assignAdmin: async (req,res)=>{
-    const userId = req.body.userId
-    const {orgId} = req.params
-    const {UserOrganisation} = await dbInitialization 
-    const sequelize = await getSequelizeInstance();
-    const transaction = await sequelize.transaction();  
+  // add an admin to organisation
+  assignAdmin: async (req, res) => {
+    const userId = req.body.userId;
+    const { orgId } = req.params;
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { UserOrganisation } = models; // Destructure UserOrganisation from models
+
+    const transaction = await sequelize.transaction();
+
     try {
       const organisation = await Organisation.findOne(
-        { where: { orgId } },
-        { transaction }
+        { where: { orgId }, transaction }
       );
 
       if (!organisation) {
@@ -283,8 +302,7 @@ module.exports = {
       }
 
       const userOrganisation = await UserOrganisation.findOne(
-        { where: { userId, orgId } },
-        { transaction }
+        { where: { userId, orgId }, transaction }
       );
 
       if (!userOrganisation) {
@@ -308,7 +326,6 @@ module.exports = {
         { where: { userId, orgId }, transaction }
       );
 
-
       await transaction.commit();
 
       return res.status(200).json({
@@ -323,20 +340,21 @@ module.exports = {
         message: "Failed to assign the user as admin to the organization",
       });
     }
-
   },
 
-  //change admin to regular to organisation
-  removeAdmin: async (req,res)=>{
-    const userId = req.body.userId
-    const {orgId} = req.params
-    const {UserOrganisation} = await dbInitialization 
-    const sequelize = await getSequelizeInstance();
-    const transaction = await sequelize.transaction();  
+  // change admin to regular user in organisation
+  removeAdmin: async (req, res) => {
+    const userId = req.body.userId;
+    const { orgId } = req.params;
+    const { models, sequelize } = await dbInitialization;
+    const { Organisation } = models; // Destructure Organisation from models
+    const { UserOrganisation } = models; // Destructure UserOrganisation from models
+    // Start a transaction
+    const transaction = await sequelize.transaction();
+
     try {
       const organisation = await Organisation.findOne(
-        { where: { orgId } },
-        { transaction }
+        { where: { orgId }, transaction }
       );
 
       if (!organisation) {
@@ -348,8 +366,7 @@ module.exports = {
       }
 
       const userOrganisation = await UserOrganisation.findOne(
-        { where: { userId, orgId } },
-        { transaction }
+        { where: { userId, orgId }, transaction }
       );
 
       if (!userOrganisation) {
@@ -360,11 +377,11 @@ module.exports = {
         });
       }
       // Check if the user is not an admin
-      if (userOrganisation.role !== 'user') {
+      if (userOrganisation.role !== 'admin') {
         await transaction.rollback();
         return res.status(400).json({
           status: "Bad Request",
-          message: "User not an admin of the organization",
+          message: "User is not an admin of the organization",
         });
       }
       // Update the user's role to user
@@ -373,7 +390,13 @@ module.exports = {
         { where: { userId, orgId }, transaction }
       );
 
-  }catch (error) {
+      await transaction.commit();
+
+      return res.status(200).json({
+        status: "success",
+        message: "Admin role removed successfully",
+      });
+    } catch (error) {
       if (transaction) await transaction.rollback();
       console.error("Error removing admin role:", error.message);
       return res.status(500).json({
@@ -381,6 +404,5 @@ module.exports = {
         message: "Failed to remove admin role from user",
       });
     }
-}
-}
-
+  },
+};

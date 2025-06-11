@@ -1,16 +1,15 @@
 const dbInitialization = require("../models/modelInit");
-const { generateAccessToken,generateRefreshToken} = require('../../utils/utility');
-const bcrypt = require('bcryptjs')
+const { generateAccessToken, generateRefreshToken } = require('../../utils/utility');
+const bcrypt = require('bcryptjs');
 
 const handleLogIn = async (req, res) => {
   try {
-    // Ensure models are properly initialized
-    const { User } = await dbInitialization;
+    // destructure models and sequelize properly from dbInitialization
+    const { models, sequelize } = await dbInitialization;
+    const { User } = models;
 
-    // Extract login credentials from the request body
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         status: "Bad request",
@@ -19,10 +18,7 @@ const handleLogIn = async (req, res) => {
       });
     }
 
-    // Find the user by email
     const user = await User.findOne({ where: { email } });
-
-    // Check if user exists
     if (!user) {
       return res.status(404).json({
         status: "Not found",
@@ -31,12 +27,8 @@ const handleLogIn = async (req, res) => {
       });
     }
 
-    // Encrypt the input password and compare with stored password
-    const encryptedPassword = await bcrypt.compare(password,user.password);
-    // const encryptedPassword = await encryptPassword(password);
-    console.log("userPass",user.password)
-    console.log("EncryptPass",encryptedPassword)
-    if ( !encryptedPassword) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(401).json({
         status: "Unauthorized",
         message: "Invalid credentials",
@@ -44,21 +36,20 @@ const handleLogIn = async (req, res) => {
       });
     }
 
-    // Generate an access token and refresh token
     const accessToken = generateAccessToken(user.email, user.userId);
-     const refreshToken = generateRefreshToken(user.email, user.userId);
-     user.refreshToken = refreshToken
-     await user.save()
+    const refreshToken = generateRefreshToken(user.email, user.userId);
+    user.refreshToken = refreshToken;
+    await user.save();
 
-     // Set the refresh token as an HTTP-only cookie
-     res.cookie("refresh-token", refreshToken, {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("refresh-token", refreshToken, {
       httpOnly: true,
       sameSite: "None",
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: isProduction,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
-    // Respond with success and access token
     return res.status(200).json({
       status: "success",
       message: "Login successful",
@@ -74,7 +65,6 @@ const handleLogIn = async (req, res) => {
       },
     });
   } catch (error) {
-    // Log and handle unexpected errors
     console.error("Login error:", error.message);
     return res.status(500).json({
       status: "error",

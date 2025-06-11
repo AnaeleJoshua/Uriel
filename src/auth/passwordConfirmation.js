@@ -1,8 +1,9 @@
-const sendEmail = require('../../utils/sendEmail')
-const dbInitialization = require('../models/modelInit')
-const {generateRandomToken} = require('../../utils/utility')
+const sendEmail = require('../../utils/sendEmail');
+const dbInitialization = require('../models/modelInit');
+const { generateRandomToken, encryptPassword } = require('../../utils/utility');
 const ejs = require('ejs');
 const path = require('path');
+const { Op } = require('sequelize');
 
 // Render EJS template
 const templatePath = path.join(__dirname, '../../email_templates', 'password.ejs');
@@ -18,23 +19,28 @@ const renderTemplate = (data) => {
             }
         });
     });
-}
+};
 
-async function sendPasswordResetMail(req,res){
-    const {User} = await dbInitialization
-    const email = req.body.email
-    console.log('change password email',email)
-    const user = await User.findOne({where:{email}})
-    console.log(user)
-    if(!user) return res.status(400).send('invalid email')
-    const token = generateRandomToken()
-    const expirationDate = new Date()
-    expirationDate.setHours(expirationDate.getHours() + 24)
-    user.confirmationCode = token
+async function sendPasswordResetMail(req, res) {
+    const { models: { User } } = await dbInitialization;
+
+    const email = req.body.email;
+    console.log('Change password email:', email);
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) return res.status(400).send('Invalid email');
+
+    const token = generateRandomToken();
+    const expirationDate = new Date();
+    expirationDate.setHours(expirationDate.getHours() + 24);
+
+    user.confirmationCode = token;
     user.confirmationExpires = expirationDate;
-    await user.save()
-    const hostUrl = `${req.protocol}://${req.get('host')}`
-    const confirmation_url = `${hostUrl}/new_password_form.html?token=${token}`
+    await user.save();
+
+    const hostUrl = `${req.protocol}://${req.get('host')}`;
+    const confirmation_url = `${hostUrl}/new_password_form.html?token=${token}`;
+
     const data = {
         name: user.firstName,
         confirmationUrl: confirmation_url,
@@ -44,38 +50,40 @@ async function sendPasswordResetMail(req,res){
         User_email: user.email,
         companyName: 'Uriel',
         expiryHours: 24,
-    }
-    const htmlContent = await renderTemplate(data)
-    return sendEmail(user.email,'Password Recovery',htmlContent)
-    .then(() => {
+    };
+
+    try {
+        const htmlContent = await renderTemplate(data);
+        await sendEmail(user.email, 'Password Recovery', htmlContent);
         console.log('Email sent successfully');
         res.status(200).send('Password recovery email sent successfully');
-    })
-    .catch((error) => {
-        console.error('Error sending email:', error)}
-    )
-
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).send('Failed to send password reset email');
+    }
 }
 
-async function confirmPassword(req,res){
-    //get token and password from request
-    const {token,password} = req.body;
-    //check for token validity
-    const {User} = await dbInitialization;
-    const user = await User.findOne({where:{confirmationCode:token,confirmationExpires:{[Op.gt]:new Date()}}})
-    if(!user) return res.status(400).send('invalid token')
-    //update password
+async function confirmPassword(req, res) {
+    const { token, password } = req.body;
+    const { models: { User } } = await dbInitialization;
+
+    const user = await User.findOne({
+        where: {
+            confirmationCode: token,
+            confirmationExpires: { [Op.gt]: new Date() }
+        }
+    });
+
+    if (!user) return res.status(400).send('Invalid or expired token');
+
     const encryptedPassword = await encryptPassword(password);
-    user.password = encryptedPassword
-    user.confirmationCode = null
-    user.confirmationExpires = null
-    await user.save()
+    user.password = encryptedPassword;
+    user.confirmationCode = null;
+    user.confirmationExpires = null;
+    await user.save();
+
     // Redirect to the success page
     res.redirect('/password-reset-success.html');
-    //send success response
-    res.status(200).send('password updated successfully')
-    
-    //send success response
 }
 
-module.exports = { sendPasswordResetMail,confirmPassword}
+module.exports = { sendPasswordResetMail, confirmPassword };

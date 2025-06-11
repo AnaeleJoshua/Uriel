@@ -33,7 +33,7 @@ const UserModel = {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  avatarUrl:{
+  displayImage:{
     type: DataTypes.STRING,
     allowNull: true,
   },
