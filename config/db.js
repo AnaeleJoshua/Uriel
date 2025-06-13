@@ -8,7 +8,11 @@ const initializeSequelize = async () => {
     if (!sequelizeInstance) {
       if (process.env.NODE_ENV === "production") {
         // ✅ Production: use connection string
-        sequelizeInstance = new Sequelize(process.env.DATABASE_URL, {
+        if(!process.env.DATABASE_URL){
+          console.log(process.env.DATABASE_URL)
+          throw new Error("Database url is not defined")
+        }else{
+          sequelizeInstance = new Sequelize(process.env.DATABASE_URL, {
           dialect: "postgres",
           dialectOptions: {
             ssl: {
@@ -18,6 +22,7 @@ const initializeSequelize = async () => {
           },
           logging: false,
         });
+        }
       } else {
         // ✅ Development: use individual credentials
         sequelizeInstance = new Sequelize(
