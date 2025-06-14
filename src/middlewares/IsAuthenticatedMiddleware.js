@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const  dotenv = require('dotenv')
+const redisClient = require('../../config/redisClient')
 dotenv.config()
 module.exports = {
     check:async (req,res,next)=>{
