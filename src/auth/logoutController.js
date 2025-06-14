@@ -19,7 +19,7 @@ const logOut = async (req, res) => {
         message: 'Invalid request',
       });
     }
-const redisClient = require('../utils/redisClient');
+const redisClient = require('../../config/redisClient');
 const jwt = require('jsonwebtoken');
 
 const logOut = async (req, res) => {
