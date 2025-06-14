@@ -26,12 +26,26 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
     environment:
       DB_HOST: db
       DB_USER: 'postgres'
       DB_PASSWORD: 'postgres'
       DATABASE_NAME: 'uriel_db'
       DB_PORT: 5432
+      REDIS_URL: redis://redis:6379
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
     
 
 volumes:

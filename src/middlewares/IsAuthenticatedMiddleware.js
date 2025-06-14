@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const  dotenv = require('dotenv')
 dotenv.config()
 module.exports = {
-    check:(req,res,next)=>{
+    check:async (req,res,next)=>{
         const authHeader = req.headers['authorization']
         console.log("authHeader:",authHeader)
         // IF no auth headers are provided
@@ -38,7 +38,11 @@ module.exports = {
         }
       })
     }
-console.log("jwt:",process.env.ACCESS_TOKEN_SECRET)
+    // Check Redis blacklist
+  const isBlacklisted = await redisClient.get(`bl_${token}`);
+  if (isBlacklisted) {
+    return res.status(403).json({ message: 'Invalid login. Please login again.' });
+  }
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,{algorithms:['HS256'],clockTolerance: 5},(err,user)=>{
        
@@ -49,7 +53,7 @@ console.log("jwt:",process.env.ACCESS_TOKEN_SECRET)
               err:err
             });
           }
-    
+          user.accessToken = token
           req.user = user // Save the user object for further use
         console.log(user)
           next();
