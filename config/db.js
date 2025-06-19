@@ -12,6 +12,7 @@ const initializeSequelize = async () => {
           console.log(process.env.DATABASE_URL)
           throw new Error("Database url is not defined")
         }else{
+          console.log(process.env.DATABASE_URL)
           sequelizeInstance = new Sequelize(process.env.DATABASE_URL, {
           dialect: "postgres",
           dialectOptions: {
