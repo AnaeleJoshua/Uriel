@@ -4,6 +4,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8000',
   'https://uriel-q6ux.onrender.com',
+  'https://uriel-q6ux.onrender.com',
   'https://uriel.vercel.app/'
 ];
 
