@@ -68,21 +68,21 @@ async function confirmPassword(req, res) {
     const { models: { User } } = await dbInitialization;
     console.log("password",password)
     console.log("token",token)
-    // const user = await User.findOne({
-    //     where: {
-    //         confirmationCode: token,
-    //         confirmationExpires: { [Op.gt]: new Date() }
-    //     }
-    // });
+    const user = await User.findOne({
+        where: {
+            confirmationCode: token,
+            confirmationExpires: { [Op.gt]: new Date() }
+        }
+    });
 
-    // if (!user) return res.status(400).send('Invalid or expired token');
+    if (!user) return res.status(400).send('Invalid or expired token');
 
     const encryptedPassword = await encryptPassword(password);
     console.log('encrypted pass',encryptPassword)
-    // user.password = encryptedPassword;
-    // user.confirmationCode = null;
-    // user.confirmationExpires = null;
-    // await user.save();
+    user.password = encryptedPassword;
+    user.confirmationCode = null;
+    user.confirmationExpires = null;
+    await user.save();
 
     // Redirect to the success page
     res.redirect('/password-reset-success.html');
