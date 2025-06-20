@@ -20,11 +20,14 @@ const path = require('path')
 // Middleware import
 const errorHandler = require('./src/middlewares/errorHandler');
 
+//parse form data
+app.use(express.urlencoded({ extended: true }));
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Custom middleware logger
 app.use(logger);
+
 
 // Handle options credentials check - before CORS and fetch cookies credentials requirement
 app.use(credentials);
