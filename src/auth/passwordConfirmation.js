@@ -66,8 +66,8 @@ async function sendPasswordResetMail(req, res) {
 async function confirmPassword(req, res) {
     const { token, password } = req.body;
     const { models: { User } } = await dbInitialization;
-    console.log("password",password)
-    console.log("token",token)
+    // console.log("password",password)
+    // console.log("token",token)
     const user = await User.findOne({
         where: {
             confirmationCode: token,

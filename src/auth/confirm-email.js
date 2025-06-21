@@ -5,12 +5,8 @@ async function confirmEmail(req, res) {
   const { models } = await dbInitialization;
   const { User } = models;
 
-  console.log("confirm email");
-  console.log("req.query", req.query);
-
   const { token } = req.query;
-  console.log("returned token", token);
-
+ 
   const user = await User.findOne({ where: { confirmationCode: token } });
 
   if (!user) return res.status(400).send("Invalid token");

@@ -3,7 +3,8 @@ const dbInitialization = require("../models/modelInit");
 module.exports = {
   // Get user by ID
   getUserById: async (req, res) => {
-    const { User, Organisation, sequelize } = await dbInitialization;
+    const { sequelize, models } = await dbInitialization;
+    const { User, Organisation, UserOrganisation } = models;
     const { id } = req.params;
 
     const transaction = await sequelize.transaction();
@@ -98,7 +99,8 @@ module.exports = {
 
   // Upload avatar
   uploadAvatar: async (req, res) => {
-    const { User, sequelize } = await dbInitialization;
+    const { sequelize, models } = await dbInitialization;
+    const { User} = models;
     const { id } = req.params;
     const { file } = req;
 
@@ -142,7 +144,8 @@ module.exports = {
 
   // Get avatar
   getAvatar: async (req, res) => {
-    const { User } = await dbInitialization;
+   const { sequelize, models } = await dbInitialization;
+    const { User} = models;;
     const { id } = req.params;
 
     try {
