@@ -24,7 +24,7 @@ module.exports = {
       }
 
       const organisations = await Organisation.findAll({
-        attributes: ["name"],
+        attributes: ["orgName"],
         include: {
           model: User,
           where: { userId: id },
