@@ -7,7 +7,7 @@ const upload = require('../middlewares/uploadMiddleWare')
 
 
 router.get('/:id',[isAuthenticated.check,UserController.getUserById])
-router.put('/update/:id',[isAuthenticated.check,UserController.updateUser])
+router.patch('/update/:id',[isAuthenticated.check,UserController.updateUser])
 // router.post('/:id/upload',upload.single('avatar'),
 // UserController.upload)
 router.post('/:id/upload', [isAuthenticated.check,upload.single('avatar'), UserController.uploadAvatar]);
