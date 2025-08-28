@@ -172,7 +172,7 @@ src/
 ├── middlewares/            # Custom middlewares
 ├── routes/                 # Route definitions
 ├── schemas/                # JSON schemas for validation
-└── index.js                # App entry point
+└── app.js                # App entry point
 📄 License
 ```
 * MIT License - see LICENSE for details.
