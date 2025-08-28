@@ -54,6 +54,8 @@ Ensure you have the following installed:
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 - A relational database (e.g., **PostgreSQL**, **MySQL**)
 - [Git](https://git-scm.com/)
+- Redis instance
+
 
 ### Steps
 
