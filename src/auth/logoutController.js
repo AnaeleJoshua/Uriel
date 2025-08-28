@@ -1,5 +1,4 @@
 const dbInitialization = require("../models/modelInit");
-const redisClient = require('../../config/redisClient')
 const jwt = require('jsonwebtoken');
 
 const logOut = async (req, res) => {
@@ -31,6 +30,7 @@ const logOut = async (req, res) => {
     const exp = decoded?.exp;
 
     if (exp) {
+      //ttl - time to leave
       const ttl = exp - Math.floor(Date.now() / 1000); // time until expiry in seconds
       await redisClient.setEx(`bl_${token}`, ttl, 'blacklisted');
     }

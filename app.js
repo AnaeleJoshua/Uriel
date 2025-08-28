@@ -6,8 +6,8 @@ const port = process.env.PORT || 3000;
 const cors = require("cors");
 const corsOptions = require('./config/corsOptions');
 const morgan = require("morgan");
-// const swaggerUI = require('swagger-ui-express');
-// const YAML = require('yamljs');
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
 const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path')
 
 // Create swaggerDocs file
-// const swaggerJsDocs = YAML.load('./api.yaml');
+const swaggerJsDocs = YAML.load('./api.yaml');
 
 // Middleware import
 const errorHandler = require('./src/middlewares/errorHandler');
@@ -54,12 +54,12 @@ app.use(cookieParser());
     console.log("Database synchronized.");
 
     // Routes
-    app.get("/api/v1/", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
-    // app.use("/v1/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
+    app.get("/api/v1/", (req, res) =>  res.redirect('/'));
+    app.use("/api/v1/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
     app.use("/api/v1/auth", require('./src/routes/authRoute'));
     app.use("/api/v1/users", require("./src/routes/userRoutes"));
     app.use("/api/v1/organisations", require("./src/routes/organisationsRoutes"));
-    app.get("/", (req, res) =>  res.send('welcome to Uriel'));
+    app.get("/", (req, res) =>  res.sendFile(path.join(__dirname,'src/','views','index.html')))
     app.get("/avatar", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
 

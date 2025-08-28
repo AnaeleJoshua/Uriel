@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const crypto = require('crypto');
 
 
-const genrateToken = (payload,secret,expiresIn) => {
+const generateToken = (payload,secret,expiresIn) => {
   return jwt.sign(payload,secret,{expiresIn})
 }
 // Generates an Access Token using username and userId for the user's authentication
@@ -13,7 +13,7 @@ const generateAccessToken = (email, userId) => {
     const expiration = Number(process.env.JWT_ACCESS_EXPIRATION) || 120; // in seconds
     console.log('Token will expire in:', process.env.JWT_ACCESS_EXPIRATION);
 
-    return genrateToken(payload,secret,expiration) 
+    return generateToken(payload,secret,expiration) 
   };
 // Generates an refresh Token using username and userId for the user's authentication
 const generateRefreshToken = (email, userId) => {
