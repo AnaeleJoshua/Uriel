@@ -7,7 +7,7 @@
 ![JWT](https://img.shields.io/badge/Auth-JWT-yellow?style=flat&logo=jsonwebtokens&logoColor=black)
 ![Multer](https://img.shields.io/badge/Uploads-Multer-orange?style=flat)
 
-> **Uriel is a secure and modular REST API** designed for managing users, authentication, avatars, and organization-related operations.  
+> **Uriel is a secure user and organisation management REST API** designed for managing users, and organisation. It manages authentication,authourization, user management, organisation management, avatars, and organization-related operations.  
 > Built with **Express.js**, it demonstrates best practices in backend engineering: authentication, validation, middleware usage, and clean project structure.  
 
 ---
@@ -20,8 +20,6 @@ Uriel is built to:
 - Support **secure password recovery** with email workflows.  
 - Demonstrate **scalable, modular Express.js architecture**.  
 
-For **other developers**: This project serves as a **starter boilerplate** for secure Node.js/Express backends with authentication and user management already built in.  
-
 ---
 
 ## 🛠️ Technical Skills Demonstrated
@@ -31,7 +29,7 @@ For **other developers**: This project serves as a **starter boilerplate** for s
 - **Middleware Development** – Custom middlewares for security, validation & uploads  
 - **File Uploads** – Avatar handling with Multer  
 - **REST API Design** – Clean and modular route structuring  
-- **Security Best Practices** – Token protection, password recovery, email confirmation  
+- **Security Best Practices** – Token protection, password recovery, email confirmation, used token blacklisting
 - **Scalable Architecture** – Easy to extend for organizational resource management  
 - **Caching** - Redis caching for used token blacklisting
 
