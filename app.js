@@ -2,11 +2,12 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const cors = require("cors");
 const corsOptions = require('./config/corsOptions');
 const morgan = require("morgan");
 const swaggerUI = require('swagger-ui-express');
+const redoc = require('redoc-express')
 const YAML = require('yamljs');
 const getSequelizeInstance = require('./config/db');
 const { logger } = require('./src/middlewares/logEvents');
@@ -15,7 +16,10 @@ const cookieParser = require('cookie-parser');
 const path = require('path')
 
 // Create swaggerDocs file
-const swaggerJsDocs = YAML.load('./api.yaml');
+// filepath: /home/vboxuser/node_projects/Uriel/app.js
+// ...existing code...
+const swaggerJsDocs = YAML.load(path.join(__dirname, 'api.yaml'));
+// ...existing code...;
 
 // Middleware import
 const errorHandler = require('./src/middlewares/errorHandler');
