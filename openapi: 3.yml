@@ -8,7 +8,7 @@ info:
     url: https://github.com/AnaeleJoshua
     email: yourname@example.com
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:4000
     description: Development Server
 paths:
   /api/v1/auth/register:

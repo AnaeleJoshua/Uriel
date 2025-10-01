@@ -20,7 +20,7 @@ const generateRefreshToken = (email, userId) => {
     const payload = {email,userId}
     const secret =process.env.REFRESH_TOKEN_SECRET;
     const expiration = process.env.JWT_REFRESH_EXPIRATION || '2d'
-    return genrateToken(payload,secret,expiration) 
+    return generateToken(payload,secret,expiration) 
   };
 
   //generate random token

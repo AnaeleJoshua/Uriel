@@ -8,9 +8,11 @@ info:
     url: https://github.com/AnaeleJoshua
     email: anaelejoshua@gmail.com
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:4000/api/v1
+  - url: http://127.0.0.1:4000/api/v1
+
     description: Development Server
-  - url: https://uriel-1.onrender.com/
+  - url: https://uriel-1.onrender.com/api/v1
 
 paths:
   # --- Authentication ---

@@ -33,6 +33,12 @@ Uriel is built to:
 - **Scalable Architecture** – Easy to extend for organizational resource management  
 - **Caching** - Redis caching for used token blacklisting
 
+==============================
+
+## Database Schema
+
+![Uriel ](./uriel.png)
+![Uriel Database Schema](./src/images/uriel.drawio.png)
 
 ---
 
@@ -179,6 +185,6 @@ src/
 Anaele Joshua Chukwuebuka
 MSc IT | Backend Developer | Node.js Enthusiast
 
-- **GitHub**: [https://github.com/AnaeleJoshua]
-- **LinkedIn**: [https://linkedin.com/in/joshua-anaele-2a917ab9]
-- **X**: [https://x.com/]
+- [**GitHub** ](https://github.com/AnaeleJoshua)
+- [**LinkedIn**: ](https://linkedin.com/in/joshua-anaele-2a917ab9)
+- [**X** ](https://x.com/)
