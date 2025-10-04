@@ -16,8 +16,6 @@ const cookieParser = require('cookie-parser');
 const path = require('path')
 
 // Create swaggerDocs file
-// filepath: /home/vboxuser/node_projects/Uriel/app.js
-// ...existing code...
 const swaggerJsDocs = YAML.load(path.join(__dirname, 'api.yaml'));
 // ...existing code...;
 
