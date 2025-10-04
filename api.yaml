@@ -7,10 +7,10 @@ info:
     name: Anaele Joshua
     url: https://github.com/AnaeleJoshua
     email: anaelejoshua@gmail.com
+
 servers:
   - url: http://localhost:4000/api/v1
   - url: http://127.0.0.1:4000/api/v1
-
     description: Development Server
   - url: https://uriel-1.onrender.com/api/v1
 
@@ -30,7 +30,16 @@ paths:
                 email: { type: string, example: user@example.com }
                 password: { type: string, example: Password123 }
       responses:
-        '200': { description: Login successful }
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token to be used in Authorization header
         '401': { description: Invalid credentials }
 
   /auth/register:
@@ -58,7 +67,16 @@ paths:
       summary: Get a new access token using refresh token
       tags: [Authentication]
       responses:
-        '200': { description: New access token issued }
+        '200':
+          description: New access token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: New JWT access token
         '403': { description: Forbidden }
 
   /auth/logout:
@@ -67,52 +85,6 @@ paths:
       tags: [Authentication]
       responses:
         '200': { description: Logout successful }
-
-  /auth/confirm-email:
-    get:
-      summary: Confirm user email
-      tags: [Authentication]
-      parameters:
-        - name: token
-          in: query
-          required: true
-          schema: { type: string }
-      responses:
-        '200': { description: Email confirmed }
-        '400': { description: Invalid or expired token }
-
-  /auth/reset-password:
-    post:
-      summary: Request password reset
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email: { type: string, example: user@example.com }
-      responses:
-        '200': { description: Password reset email sent }
-        '400': { description: Invalid email }
-
-  /auth/reset-password/confirm:
-    post:
-      summary: Confirm password reset
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                token: { type: string }
-                password: { type: string }
-      responses:
-        '302': { description: Redirect to password reset success page }
-        '400': { description: Invalid or expired token }
 
   # --- User Management ---
   /users/{id}:
@@ -124,9 +96,11 @@ paths:
           in: path
           required: true
           schema: { type: integer }
+      security:
+        - bearerAuth: []   # 🔒 requires token
       responses:
         '200': { description: User retrieved successfully }
-        '401': { description: Invalid user }
+        '401': { description: Unauthorized }
 
   /users/update/{id}:
     patch:
@@ -143,63 +117,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+      security:
+        - bearerAuth: []   # 🔒 requires token
       responses:
         '200': { description: User updated successfully }
         '400': { description: Failed to update record }
-
-  /users/{id}/upload:
-    post:
-      summary: Upload avatar
-      tags: [User Management]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                avatar:
-                  type: string
-                  format: binary
-      responses:
-        '200': { description: File uploaded }
-        '400': { description: File upload failed }
-
-  /users/{id}/avatar:
-    get:
-      summary: Fetch user avatar
-      tags: [User Management]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: integer }
-      responses:
-        '200': { description: Avatar retrieved }
-        '400': { description: Avatar not found }
-
-  /users/{id}/forget-password:
-    post:
-      summary: Simulate password recovery (demo)
-      tags: [User Management]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: integer }
-      responses:
-        '200': { description: Password recovery simulated }
 
   # --- Organisation Management ---
   /organisations:
     get:
       summary: Get all organisations for a user
       tags: [Organisation Management]
+      security:
+        - bearerAuth: []   # 🔒 requires token
       responses:
         '200': { description: Organisations retrieved successfully }
         '404': { description: No organisations found }
@@ -212,142 +142,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Organisation'
+      security:
+        - bearerAuth: []   # 🔒 requires token
       responses:
         '201': { description: Organisation created successfully }
         '400': { description: Invalid input }
 
-  /organisations/{orgId}:
-    get:
-      summary: Get organisation by ID
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      responses:
-        '200': { description: Organisation retrieved successfully }
-        '404': { description: Organisation not found }
-
-  /organisations/{orgId}/allUsers:
-    get:
-      summary: Get all users in an organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      responses:
-        '200': { description: Users retrieved successfully }
-        '404': { description: No user found for this organisation }
-
-  /organisations/{orgId}/addUser:
-    post:
-      summary: Add a user to an organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId: { type: integer, example: 1 }
-      responses:
-        '200': { description: User successfully added to the organisation }
-        '404': { description: Organisation not found }
-
-  /organisations/{orgId}/assign-Admin:
-    patch:
-      summary: Assign admin role to a user in organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId: { type: integer }
-      responses:
-        '200': { description: User successfully assigned as admin }
-        '404': { description: Organisation or user not found }
-
-  /organisations/{orgId}/removeAdmin:
-    patch:
-      summary: Remove admin role from a user in organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId: { type: integer }
-      responses:
-        '200': { description: Admin role removed successfully }
-        '404': { description: Organisation or user not found }
-
-  /organisations/{orgId}/remove-user:
-    delete:
-      summary: Remove a user from organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId: { type: integer }
-      responses:
-        '200': { description: User removed successfully }
-        '404': { description: Organisation or user not found }
-
-  /organisations/{orgId}/leave:
-    post:
-      summary: Leave organisation
-      tags: [Organisation Management]
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId: { type: integer }
-      responses:
-        '200': { description: User left organisation }
-        '404': { description: Organisation or user not found }
-
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT   # for documentation purposes
+
   schemas:
     User:
       type: object
