@@ -68,12 +68,12 @@ module.exports = {
     const { User } = models;
     
     const { id } = req.params;
-    const payload = req.body;
+    const {firstName,lastName,phone} = req.body;
 
     const transaction = await sequelize.transaction();
 
     try {
-      const [updatedRows] = await User.update(payload, {
+      const [updatedRows] = await User.update({firstName,lastName,phone}, {
         where: { userId: id },
         transaction,
       });

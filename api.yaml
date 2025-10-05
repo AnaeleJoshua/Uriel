@@ -220,27 +220,46 @@ paths:
 
   /users/update/{id}:
     patch:
-      summary: Update user profile
+      summary: Update user profile (excluding ID, email and password)
+      description: >
+        Updates user profile information. The user ID and password fields
+        cannot be updated using this endpoint.
       tags: [User Management]
       parameters:
         - name: id
           in: path
           required: true
-          schema:
-            type: integer
+          schema: { type: integer }
+          description: ID of the user to update
+      security:
+        - bearerAuth: []   # Ensure this route is protected
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
-      security:
-        - bearerAuth: []
+              type: object
+              properties:
+                firstName: { type: string, example: John }
+                lastName: { type: string, example: Doe }
+                phone: { type: string, example: "+123456789" }
+              additionalProperties: false
+              required:
+                - firstName
+                - lastName
+                - phone
       responses:
         '200':
           description: User updated successfully
-        '400':
-          description: Failed to update record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: User updated successfully }
+        '400': { description: Failed to update record }
+        '401': { description: Unauthorized }
+        '404': { description: User not found }
 
   /users/{id}/upload:
     post:
