@@ -27,8 +27,12 @@ paths:
             schema:
               type: object
               properties:
-                email: { type: string, example: user@example.com }
-                password: { type: string, example: Password123 }
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: Password123
       responses:
         '200':
           description: Login successful
@@ -40,11 +44,15 @@ paths:
                   access_token:
                     type: string
                     description: JWT access token to be used in Authorization header
-        '401': { description: Invalid credentials }
+                  refresh_token:
+                    type: string
+                    description: Token used to request a new access token
+        '401':
+          description: Invalid credentials
 
   /auth/register:
     post:
-      summary: Register a new user
+      summary: Register a new user and return access token
       tags: [Authentication]
       requestBody:
         required: true
@@ -53,19 +61,55 @@ paths:
             schema:
               type: object
               properties:
-                email: { type: string, example: user@example.com }
-                password: { type: string, example: Password123 }
-                firstName: { type: string, example: John }
-                lastName: { type: string, example: Doe }
-                phone: { type: string, example: "+123456789" }
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: Password123
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                phone:
+                  type: string
+                  example: "+123456789"
       responses:
-        '201': { description: User registered successfully }
-        '400': { description: Invalid input }
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Registration successful
+                  access_token:
+                    type: string
+                    description: JWT access token issued after registration
+                  refresh_token:
+                    type: string
+                    description: Token used to obtain new access token
+        '400':
+          description: Invalid input
 
   /auth/new-access-token:
     post:
       summary: Get a new access token using refresh token
       tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  description: Valid refresh token
       responses:
         '200':
           description: New access token issued
@@ -76,15 +120,84 @@ paths:
                 properties:
                   access_token:
                     type: string
-                    description: New JWT access token
-        '403': { description: Forbidden }
+                    description: Newly generated JWT access token
+        '403':
+          description: Forbidden - invalid or expired refresh token
 
   /auth/logout:
     post:
       summary: Log out user session
       tags: [Authentication]
+      security:
+        - bearerAuth: []
       responses:
-        '200': { description: Logout successful }
+        '200':
+          description: Logout successful
+
+  /auth/confirm-email:
+    get:
+      summary: Confirm user email
+      tags: [Authentication]
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Email confirmed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: New JWT issued upon confirmation
+        '400':
+          description: Invalid or expired token
+
+  /auth/reset-password:
+    post:
+      summary: Request password reset
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+      responses:
+        '200':
+          description: Password reset email sent
+        '400':
+          description: Invalid email
+
+  /auth/reset-password/confirm:
+    post:
+      summary: Confirm password reset
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '302':
+          description: Redirect to password reset success page
+        '400':
+          description: Invalid or expired token
 
   # --- User Management ---
   /users/{id}:
@@ -95,12 +208,15 @@ paths:
         - name: id
           in: path
           required: true
-          schema: { type: integer }
+          schema:
+            type: integer
       security:
-        - bearerAuth: []   # 🔒 requires token
+        - bearerAuth: []
       responses:
-        '200': { description: User retrieved successfully }
-        '401': { description: Unauthorized }
+        '200':
+          description: User retrieved successfully
+        '401':
+          description: Unauthorized
 
   /users/update/{id}:
     patch:
@@ -110,7 +226,8 @@ paths:
         - name: id
           in: path
           required: true
-          schema: { type: integer }
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -118,10 +235,72 @@ paths:
             schema:
               $ref: '#/components/schemas/User'
       security:
-        - bearerAuth: []   # 🔒 requires token
+        - bearerAuth: []
       responses:
-        '200': { description: User updated successfully }
-        '400': { description: Failed to update record }
+        '200':
+          description: User updated successfully
+        '400':
+          description: Failed to update record
+
+  /users/{id}/upload:
+    post:
+      summary: Upload avatar
+      tags: [User Management]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: File uploaded
+        '400':
+          description: File upload failed
+
+  /users/{id}/avatar:
+    get:
+      summary: Fetch user avatar
+      tags: [User Management]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Avatar retrieved
+        '400':
+          description: Avatar not found
+
+  /users/{id}/forget-password:
+    post:
+      summary: Simulate password recovery (demo)
+      tags: [User Management]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Password recovery simulated
 
   # --- Organisation Management ---
   /organisations:
@@ -129,10 +308,12 @@ paths:
       summary: Get all organisations for a user
       tags: [Organisation Management]
       security:
-        - bearerAuth: []   # 🔒 requires token
+        - bearerAuth: []
       responses:
-        '200': { description: Organisations retrieved successfully }
-        '404': { description: No organisations found }
+        '200':
+          description: Organisations retrieved successfully
+        '404':
+          description: No organisations found
     post:
       summary: Create a new organisation
       tags: [Organisation Management]
@@ -143,31 +324,216 @@ paths:
             schema:
               $ref: '#/components/schemas/Organisation'
       security:
-        - bearerAuth: []   # 🔒 requires token
+        - bearerAuth: []
       responses:
-        '201': { description: Organisation created successfully }
-        '400': { description: Invalid input }
+        '201':
+          description: Organisation created successfully
+        '400':
+          description: Invalid input
+
+  /organisations/{orgId}:
+    get:
+      summary: Get organisation by ID
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Organisation retrieved successfully
+        '404':
+          description: Organisation not found
+
+  /organisations/{orgId}/allUsers:
+    get:
+      summary: Get all users in an organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Users retrieved successfully
+        '404':
+          description: No users found for this organisation
+
+  /organisations/{orgId}/addUser:
+    post:
+      summary: Add a user to an organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User successfully added to the organisation
+        '404':
+          description: Organisation not found
+
+  /organisations/{orgId}/assign-Admin:
+    patch:
+      summary: Assign admin role to a user in organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User successfully assigned as admin
+        '404':
+          description: Organisation or user not found
+
+  /organisations/{orgId}/removeAdmin:
+    patch:
+      summary: Remove admin role from a user in organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Admin role removed successfully
+        '404':
+          description: Organisation or user not found
+
+  /organisations/{orgId}/remove-user:
+    delete:
+      summary: Remove a user from organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User removed successfully
+        '404':
+          description: Organisation or user not found
+
+  /organisations/{orgId}/leave:
+    post:
+      summary: Leave organisation
+      tags: [Organisation Management]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User left organisation
+        '404':
+          description: Organisation or user not found
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT   # for documentation purposes
+      bearerFormat: JWT
 
   schemas:
     User:
       type: object
       properties:
-        userId: { type: integer }
-        email: { type: string }
-        firstName: { type: string }
-        lastName: { type: string }
-        phone: { type: string }
-        refreshToken: { type: string }
+        userId:
+          type: integer
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        refreshToken:
+          type: string
+
     Organisation:
       type: object
       properties:
-        orgId: { type: integer }
-        name: { type: string }
-        description: { type: string }
+        orgId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+

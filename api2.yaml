@@ -78,7 +78,16 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        '200': { description: Email confirmed }
+        '200':
+          description: Email confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: New JWT 
         '400': { description: Invalid or expired token }
 
   /auth/reset-password:
