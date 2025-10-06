@@ -8,7 +8,7 @@ const handleLogIn = async (req, res) => {
     const { models, sequelize } = await dbInitialization;
     const { User } = models;
 
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     email = email ? email.toLowerCase() : null;
     if (!email || !password) {
       return res.status(400).json({
