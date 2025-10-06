@@ -105,7 +105,7 @@ module.exports = {
     const { id } = req.params;
     const { file, user } = req; // user added from authentication middleware
     console.log(`user from auth middleware: ${JSON.stringify(user)}`);
-    console.log(`user_id from token: ${user.id}, param id: ${id}`);
+    console.log(`user_id from token: ${user.userId}, param id: ${id}`);
     // ✅ Ensure file was uploaded
     if (!file) {
       return res.status(400).json({
@@ -115,7 +115,7 @@ module.exports = {
     }
 
     // ✅ Security: Ensure users can only upload their own avatar
-    if (user.id !== id) {
+    if (user.userId !== id) {
       return res.status(403).json({
         status: 'Forbidden',
         message: 'You are not allowed to modify another user’s profile.',
