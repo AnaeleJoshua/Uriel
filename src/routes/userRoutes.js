@@ -14,7 +14,10 @@ router.post('/:id/upload', [isAuthenticated.check,upload.single('avatar'), UserC
 router.post('/:id/forget-password', ()=>{
     console.log('retrieve password')
 });
-router.get('/:id/avatar', isAuthenticated.check,UserController.getAvatar);
+router.get('/:id/avatar', 
+    isAuthenticated.check,
+    UserController.getAvatar
+);
 
 module.exports = router
 

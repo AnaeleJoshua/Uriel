@@ -1,56 +1,44 @@
-const multer = require("multer")
-const {CloudinaryStorage} = require("multer-storage-cloudinary")
+// middleware/upload.js
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../../config/cloudinaryConfig');
-const path = require('path')
-const dbInitialization = require("../models/modelInit");
+const path = require('path');
 
-const allowedFileTypes = ['image/jpg','image/jpeg','image/png']
-const fileSize= 5*1024*1024
- 
-    const storage = new CloudinaryStorage({
-        cloudinary:cloudinary,
-        params:async (req,file)=>{
-            const {User} = await dbInitialization 
-            // const folderPath= `${folderName.trim()}`
-            const id = req.params
-            // const user = await  User.findOne({where:{userId:id}})
-            // const folderName = `${user.firstName}_${user.lastName}`
-            const fileExtension = path.extname(file.originalname).substring(1)
-            const publicId = `${file.fieldname}-${Date.now()}`
+const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+const fileSize = 5 * 1024 * 1024; // 5MB
 
-            return {
-                folder:"folderName",
-                public_id:publicId,
-                format:fileExtension
-            }
-        // }
+// ✅ Configure Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    try {
+      const { id } = req.params;
+      const ext = path.extname(file.originalname).substring(1);
+      const timestamp = Date.now();
+
+      return {
+        folder: `user_${id}/avatars`,  // Dynamic folder per user
+        public_id: `avatar_${timestamp}`,
+        format: ext,
+        transformation: [{ width: 400, height: 400, crop: 'fill', gravity: 'face' }],
+      };
+    } catch (err) {
+      console.error('Error in Cloudinary params:', err);
+      throw new Error('Error configuring Cloudinary upload.');
     }
+  },
 });
 
+// ✅ File filter + upload setup
+const upload = multer({
+  storage,
+  limits: { fileSize },
+  fileFilter: (req, file, cb) => {
+    if (!allowedFileTypes.includes(file.mimetype)) {
+      return cb(new Error(`Invalid file type. Only ${allowedFileTypes.join(', ')} allowed.`));
+    }
+    cb(null, true);
+  },
+});
 
-//     return storage
-
-const uploader = function uploadMiddleware(allowedFileTypes,fileSize){
-
-return multer({
-    // dest:path.join(__dirname,'../','uploads')
-    
-    storage:storage,
-    limits:{
-        fileSize:fileSize
-    },
-    fileFilter:(req,file,cb)=>{
-        if (allowedFileTypes.includes(file.mimetype)){
-            cb(null,true)
-        }else{
-            cb(new Error(`Invalid file type:only ${allowedFileTypes.join(', ')} is allowed`))
-        }
-
-    // }
-}
-})
-
-}
-const upload = uploader(allowedFileTypes,fileSize)
-
-module.exports = upload
+module.exports = upload;

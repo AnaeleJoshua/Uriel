@@ -1,4 +1,5 @@
 const dbInitialization = require("../models/modelInit");
+const cloudinary = require('../../config/cloudinaryConfig');
 
 module.exports = {
   // Get user by ID
@@ -100,47 +101,75 @@ module.exports = {
   // Upload avatar
   uploadAvatar: async (req, res) => {
     const { sequelize, models } = await dbInitialization;
-    const { User} = models;
+    const { User } = models;
     const { id } = req.params;
-    const { file } = req;
+    const { file, user } = req; // user added from authentication middleware
 
+    // ✅ Ensure file was uploaded
     if (!file) {
-      return res
-        .status(400)
-        .json({ status: "Bad Request", message: "No file uploaded" });
+      return res.status(400).json({
+        status: 'Bad Request',
+        message: 'No file uploaded.',
+      });
     }
 
-    const fileUrl = file.path;
+    // ✅ Security: Ensure users can only upload their own avatar
+    if (user.id !== id) {
+      return res.status(403).json({
+        status: 'Forbidden',
+        message: 'You are not allowed to modify another user’s profile.',
+      });
+    }
+
+    const fileUrl = file.path; // Cloudinary returns hosted URL
     const transaction = await sequelize.transaction();
 
     try {
-      const user = await User.findOne({
-        where: { userId: id },
-        transaction,
-      });
+      const existingUser = await User.findOne({ where: { userId: id }, transaction });
 
-      if (!user) {
-        throw new Error("User not found");
+      if (!existingUser) {
+        throw new Error('User not found.');
       }
 
-      user.avatarUrl = fileUrl;
-      await user.save({ transaction });
+      // ✅ Delete old avatar from Cloudinary (if exists)
+      if (existingUser.avatarUrl) {
+        const publicId = existingUser.avatarUrl.split('/').slice(-1)[0].split('.')[0];
+        await cloudinary.uploader.destroy(`user_${id}/avatars/${publicId}`).catch(() => {});
+      }
 
+      // ✅ Update new avatar URL
+      existingUser.avatarUrl = fileUrl;
+      await existingUser.save({ transaction });
       await transaction.commit();
+
       return res.status(200).json({
-        status: "success",
-        message: "File uploaded",
-        fileUrl,
+        status: 'success',
+        message: 'Avatar uploaded successfully.',
+        avatarUrl: fileUrl,
       });
     } catch (err) {
-      console.error(err);
+      console.error('Upload error:', err);
+
+      // Rollback transaction
       await transaction.rollback();
+
+      // ✅ Delete uploaded file from Cloudinary if DB update failed
+      if (file && file.filename) {
+        try {
+          await cloudinary.uploader.destroy(file.filename);
+        } catch (cleanupErr) {
+          console.error('Failed to clean up Cloudinary upload:', cleanupErr);
+        }
+      }
+
       return res.status(400).json({
-        status: "Bad Request",
-        message: "File upload failed",
+        status: 'Bad Request',
+        message: 'File upload failed.',
+        error: err.message,
       });
     }
   },
+
 
   // Get avatar
   getAvatar: async (req, res) => {
