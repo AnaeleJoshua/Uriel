@@ -9,8 +9,8 @@ const handleLogIn = async (req, res) => {
     const { User } = models;
 
     const { email, password } = req.body;
-
-    if (!email || !password) {
+    const loweredEmail = email ? email.toLowerCase() : null;
+    if (!loweredEmail || !password) {
       return res.status(400).json({
         status: "Bad request",
         message: "Email and password are required",
@@ -18,7 +18,7 @@ const handleLogIn = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { loweredEmail } });
     if (!user) {
       return res.status(404).json({
         status: "Not found",

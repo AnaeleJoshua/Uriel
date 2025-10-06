@@ -9,7 +9,7 @@ const handleRegister = async (req, res) => {
     const { User, Organisation, UserOrganisation } = models;
 
     const payload = req.body;
-    const payloadEmail = payload.email;
+    const payloadEmail = payload.email.toLowerCase();
 
     // Start transaction
     const transaction = await sequelize.transaction();
