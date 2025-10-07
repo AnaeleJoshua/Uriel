@@ -105,7 +105,7 @@ module.exports = {
     let { id } = req.params;
     id = id.toString();
     const { file, user } = req; // user added from authentication middleware
-    onsole.log(`user_id from token: ${typeof(user.userId)}, param id: ${typeof(id)}`);
+    console.log(`user_id from token: ${typeof(user.userId)}, param id: ${typeof(id)}`);
     // ✅ Ensure file was uploaded
     if (!file) {
       return res.status(400).json({
