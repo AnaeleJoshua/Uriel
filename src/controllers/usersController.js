@@ -183,10 +183,10 @@ module.exports = {
     try {
       const user = await User.findOne({
         where: { userId: id },
-        attributes: ["avatarUrl"],
+        attributes: ["displayImage"],
       });
 
-      if (!user || !user.avatarUrl) {
+      if (!user || !user.displayImage) {
         return res
           .status(400)
           .json({ status: "Bad Request", message: "Avatar not found" });
@@ -195,7 +195,7 @@ module.exports = {
       return res.status(200).json({
         status: "success",
         data: {
-          avatarUrl: user.avatarUrl,
+          avatarUrl: user.displayImage,
         },
       });
     } catch (err) {
