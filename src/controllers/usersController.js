@@ -135,13 +135,13 @@ module.exports = {
       }
 
       // ✅ Delete old avatar from Cloudinary (if exists)
-      if (existingUser.avatarUrl) {
-        const publicId = existingUser.avatarUrl.split('/').slice(-1)[0].split('.')[0];
+      if (existingUser.displayImage) {
+        const publicId = existingUser.displayImage.split('/').slice(-1)[0].split('.')[0];
         await cloudinary.uploader.destroy(`user_${id}/avatars/${publicId}`).catch(() => {});
       }
 
       // ✅ Update new avatar URL
-      existingUser.avatarUrl = fileUrl;
+      existingUser.displayImage = fileUrl;
       await existingUser.save({ transaction });
       await transaction.commit();
 
