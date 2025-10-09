@@ -62,7 +62,12 @@ module.exports = {
       await transaction.commit();
       return res.status(200).json({
         status: "success",
-        data: userOrganisations.map((org) => org.toJSON()),
+        data: userOrganisations.map((org) => ({
+          orgId: org.orgId,
+          name: org.name,
+          description: org.description,
+          createdBy: org.createdBy,
+        })),
       });
     } catch (error) {
       if (transaction) await transaction.rollback();
