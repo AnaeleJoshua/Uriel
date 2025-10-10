@@ -101,7 +101,7 @@ module.exports = {
       }
 
       const newOrg = await Organisation.create(
-        { ...payload, createdBy: `${user.firstName} ${user.lastName}` },
+        { ...payload, createdBy: `${user.firstName} ${user.lastName}`,ownerId:userId },
         { transaction }
       );
 
