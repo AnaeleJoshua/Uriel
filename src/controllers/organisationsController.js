@@ -9,7 +9,7 @@ module.exports = {
     const { Organisation } = models; // Destructure Organisation from models
     const transaction = await sequelize.transaction();
     try {
-      const { id } = req.params;
+      const { orgId } = req.params;
 
       const organisation = await Organisation.findOne(
         { where: { orgId: id }, transaction } // transaction should be in options object here
