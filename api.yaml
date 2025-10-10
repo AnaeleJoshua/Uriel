@@ -549,9 +549,7 @@ components:
     Organisation:
       type: object
       properties:
-        orgId:
-          type: integer
-        name:
+        orgName:
           type: string
         description:
           type: string
