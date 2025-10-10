@@ -268,7 +268,7 @@ module.exports = {
         status: "success",
         data: organisationUsers.map((user) => ({
           userId: user.userId,
-          name: user.name,
+          name: `${user.firstName} ${user.lastName}`,
         })),
       });
     } catch (error) {
