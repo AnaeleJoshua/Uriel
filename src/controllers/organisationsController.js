@@ -12,7 +12,7 @@ module.exports = {
       const { orgId } = req.params;
 
       const organisation = await Organisation.findOne(
-        { where: { orgId: id }, transaction } // transaction should be in options object here
+        { where: { orgId: orgId }, transaction } // transaction should be in options object here
       );
 
       if (!organisation) {
