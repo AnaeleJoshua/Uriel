@@ -1,7 +1,7 @@
 module.exports = {
     type: 'object',
     properties: {
-      name: {
+      orgName: {
         type: 'string'
       },
       description: {
@@ -9,7 +9,7 @@ module.exports = {
       }
     },
     required: [
-      'name','description'
+      'orgName','description'
       
     ],
     additionalProperties: false
