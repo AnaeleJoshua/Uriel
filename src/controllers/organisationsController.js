@@ -64,7 +64,7 @@ module.exports = {
         status: "success",
         data: userOrganisations.map((org) => ({
           orgId: org.orgId,
-          name: org.name,
+          orgName: org.orgName,
           description: org.description,
           createdBy: org.createdBy,
         })),
