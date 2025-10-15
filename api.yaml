@@ -209,7 +209,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       security:
         - bearerAuth: []
       responses:
@@ -229,7 +229,7 @@ paths:
         - name: id
           in: path
           required: true
-          schema: { type: integer }
+          schema: { type: string }
           description: ID of the user to update
       security:
         - bearerAuth: []   # Ensure this route is protected
@@ -270,7 +270,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -294,7 +294,7 @@ paths:
       summary: Fetch user avatar
       tags: [User Management]
       parameters:
-        - name: id
+        - name: string
           in: path
           required: true
           schema:
@@ -316,7 +316,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Password recovery simulated
@@ -359,7 +359,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       security:
         - bearerAuth: []
       responses:
@@ -377,7 +377,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       security:
         - bearerAuth: []
       responses:
@@ -395,7 +395,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -404,7 +404,7 @@ paths:
               type: object
               properties:
                 userId:
-                  type: integer
+                  type: string
                   example: 1
       security:
         - bearerAuth: []
@@ -423,7 +423,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -432,7 +432,7 @@ paths:
               type: object
               properties:
                 userId:
-                  type: integer
+                  type: string
       security:
         - bearerAuth: []
       responses:
@@ -450,7 +450,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -459,7 +459,7 @@ paths:
               type: object
               properties:
                 userId:
-                  type: integer
+                  type: string
       security:
         - bearerAuth: []
       responses:
@@ -477,7 +477,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -486,7 +486,7 @@ paths:
               type: object
               properties:
                 userId:
-                  type: integer
+                  type: string
       security:
         - bearerAuth: []
       responses:
@@ -504,7 +504,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -513,7 +513,7 @@ paths:
               type: object
               properties:
                 userId:
-                  type: integer
+                  type: string
       security:
         - bearerAuth: []
       responses:
@@ -534,7 +534,7 @@ components:
       type: object
       properties:
         userId:
-          type: integer
+          type: string
         email:
           type: string
         firstName:

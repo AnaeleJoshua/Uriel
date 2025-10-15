@@ -1,6 +1,5 @@
 const { format } = require('date-fns');
 const { v4: uuid } = require('uuid');
-
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
@@ -10,21 +9,25 @@ const logEvents = async (message, logName) => {
     const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
 
     try {
-        if (!fs.existsSync(path.join('../../../tmp', 'uriel'))) {
-            await fsPromises.mkdir(path.join('../../../tmp', 'uriel'));
-        }
+        const logDir = path.join(__dirname, '../../logs/uriel');
 
-        await fsPromises.appendFile(path.join('../../../tmp','uriel', logName), logItem);
+        // Ensure log directory exists (creates if missing)
+        await fsPromises.mkdir(logDir, { recursive: true });
+
+        // Append the log item to the specified file
+        await fsPromises.appendFile(path.join(logDir, logName), logItem);
     } catch (err) {
-        console.log(err);
+        console.error('Logging error:', err);
     }
+
+    // Log to console for debugging
     console.log(logItem);
-}
+};
 
 const logger = (req, res, next) => {
-    logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, 'reqLog.txt');
+    logEvents(`${req.method}\t${req.headers.origin || 'unknown origin'}\t${req.url}`, 'reqLog.txt');
     console.log(`${req.method} ${req.path}`);
     next();
-}
+};
 
 module.exports = { logger, logEvents };

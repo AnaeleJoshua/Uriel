@@ -4,7 +4,7 @@ module.exports = {
   initialize: (sequelize) => {
     const UserOrganisationModel = {
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
           model: "user_account", // ✅ corrected
@@ -13,7 +13,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       orgId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
           model: "organisation", // ✅ corrected
@@ -22,7 +22,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       role: {
-        type: DataTypes.ENUM("owner", "admin", "user"),
+        type: DataTypes.ENUM("owner", "org_admin", "user","system_admin"),
         defaultValue: "user",
       },
     };

@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
-
+const { createId } = require('@paralleldrive/cuid2');
 let Organisation; // Store the model instance
 
 const OrganisationModel = {
   orgId: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.STRING,
+    defaultValue: () => createId(),
     primaryKey: true,
   },
   orgName: {
@@ -16,7 +16,7 @@ const OrganisationModel = {
     type: DataTypes.STRING,
   },
   ownerId:{
-    type:DataTypes.INTEGER,
+    type:DataTypes.STRING,
     allowNull: false
   },
   createdBy: {

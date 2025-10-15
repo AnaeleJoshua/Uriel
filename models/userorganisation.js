@@ -4,39 +4,53 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class UserOrganisation extends Model {
     static associate(models) {
-      // Define associations here if needed
+      // Define associations explicitly for clarity
+      this.belongsTo(models.User, {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE',
+      });
+
+      this.belongsTo(models.Organisation, {
+        foreignKey: 'orgId',
+        onDelete: 'CASCADE',
+      });
     }
   }
 
-  UserOrganisation.init({
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "user_account",
-        key: "userId",
+  UserOrganisation.init(
+    {
+      userId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        references: {
+          model: 'user_account', // ✅ matches actual table name
+          key: 'userId',
+        },
+        onDelete: 'CASCADE',
       },
-      onDelete: "CASCADE",
-    },
-    orgId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "organisation",
-        key: "orgId",
+      orgId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        references: {
+          model: 'organisation', // ✅ matches actual table name
+          key: 'orgId',
+        },
+        onDelete: 'CASCADE',
       },
-      onDelete: "CASCADE",
+      role: {
+        type: DataTypes.ENUM('owner', 'org_admin', 'user', 'system_admin'),
+        defaultValue: 'user',
+        allowNull: false,
+      },
     },
-    role: {
-      type: DataTypes.ENUM("owner", "admin", "user"),
-      defaultValue: "user",
+    {
+      sequelize,
+      modelName: 'UserOrganisation',
+      tableName: 'user_organisation',
+      freezeTableName: true,
+      timestamps: true, // ✅ recommended for tracking changes
     }
-  }, {
-    sequelize,
-    modelName: 'UserOrganisation',
-    tableName: 'user_organisation',
-    freezeTableName: true,
-  });
+  );
 
   return UserOrganisation;
 };

@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
-
+const { createId } = require('@paralleldrive/cuid2');
 let User; // Store the model instance
 
 const UserModel = {
   userId: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.STRING,
+    defaultValue: () => createId(),
     primaryKey: true,
   },
   email: {
