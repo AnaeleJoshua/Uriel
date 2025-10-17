@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     otherKey: 'userId',
     onDelete: 'CASCADE'
   });
+  Organisation.hasMany(models.Project, { foreignKey: 'organisationId', as: 'projects' });
+
     }
   }
   Organisation.init({

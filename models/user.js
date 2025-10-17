@@ -5,11 +5,35 @@ const { createId } = require('@paralleldrive/cuid2');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      // 🏢 User ↔ Organisation
       this.belongsToMany(models.Organisation, {
         through: models.UserOrganisation,
         foreignKey: 'userId',
         otherKey: 'orgId',
+        as: 'organisations',
         onDelete: 'CASCADE',
+      });
+
+      // 📋 User → Tasks they created
+      this.hasMany(models.Task, {
+        foreignKey: 'createdBy',
+        as: 'createdTasks'
+      });
+
+      // 👥 User ↔ Tasks assigned to them
+      this.belongsToMany(models.Task, {
+        through: models.TaskAssignment,
+        foreignKey: 'userId',
+        otherKey: 'taskId',
+        as: 'assignedTasks'
+      });
+
+      // 🚀 User ↔ Projects they belong to
+      this.belongsToMany(models.Project, {
+        through: models.ProjectMember,
+        foreignKey: 'userId',
+        otherKey: 'projectId',
+        as: 'projects'
       });
     }
   }
@@ -18,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       userId: {
         type: DataTypes.STRING,
-        defaultValue: () => createId(), // ✅ auto-generate CUID
+        defaultValue: () => createId(),
         primaryKey: true,
         allowNull: false,
       },
@@ -48,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'User',
-      tableName: 'user_account', // ✅ matches DB table
+      tableName: 'user_account',
       freezeTableName: true,
     }
   );
