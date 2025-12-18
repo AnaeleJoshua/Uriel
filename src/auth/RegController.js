@@ -1,6 +1,7 @@
 const dbInitialization = require("../models/modelInit");
 const { generateAccessToken, generateRefreshToken, encryptPassword } = require('../../utils/utility');
 const sendConfirmationEmail = require('../../utils/emailConfirmation');
+const { createId } = require('@paralleldrive/cuid2');
 
 const handleRegister = async (req, res) => {
   try {
@@ -30,19 +31,24 @@ const handleRegister = async (req, res) => {
       const encryptedPassword = await encryptPassword(payload.password);
 
       // Create user
+      const userId = createId()
       const newUser = await User.create({
         ...payload,
         password: encryptedPassword,
+        userId
       }, { transaction });
-
+console.log(`userId:${newUser.userId}`)
       // Create organisation
+      const orgId = createId()
+      console.log(`orgId:${orgId}`)
       const newOrganisation = await Organisation.create({
+        orgId:orgId,
         orgName: `${newUser.firstName}'s Organisation`,
         description: `${newUser.firstName}'s organisation`,
         createdBy: `${newUser.firstName} ${newUser.lastName}`,
         ownerId: newUser.userId
       }, { transaction });
-
+      console.log(newOrganisation)
       // Add user-organisation association with role
       await UserOrganisation.create({
         userId: newUser.userId,
@@ -59,18 +65,18 @@ const handleRegister = async (req, res) => {
 
       // Email confirmation
       const baseUrl = `${req.protocol}://${req.get('host')}`;
-      const { sent, code, expiration } = await sendConfirmationEmail(newUser, baseUrl, transaction);
+      // const { sent, code, expiration } = await sendConfirmationEmail(newUser, baseUrl, transaction);
 
-      if (!sent) {
-        await transaction.rollback();
-        return res.status(500).json({
-          status: "error",
-          message: "Failed to send confirmation email",
-          statusCode: 500,
-        });
-      }
+      // if (!sent) {
+      //   await transaction.rollback();
+      //   return res.status(500).json({
+      //     status: "error",
+      //     message: "Failed to send confirmation email",
+      //     statusCode: 500,
+      //   });
+      // }
 
-      await newUser.update({ confirmationCode: code, confirmationExpires: expiration }, { transaction });
+      // await newUser.update({ confirmationCode: code, confirmationExpires: expiration }, { transaction });
 
       await transaction.commit();
 

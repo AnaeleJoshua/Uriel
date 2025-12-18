@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const {createId} = require('@paralleldrive/cuid2');
 module.exports = (sequelize, DataTypes) => {
   class Organisation extends Model {
     /**
@@ -17,13 +18,15 @@ module.exports = (sequelize, DataTypes) => {
     otherKey: 'userId',
     onDelete: 'CASCADE'
   });
+  Organisation.hasMany(models.Project, { foreignKey: 'organisationId', as: 'projects' });
+
     }
   }
   Organisation.init({
   orgId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
+    defaultValue: () => createId(),
     allowNull: false,
   },
   orgName: {
@@ -32,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
   },
   description: DataTypes.STRING,
   ownerId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   createdBy: DataTypes.STRING

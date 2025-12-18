@@ -1,9 +1,9 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('user_account', {
-      
       userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -12,63 +12,65 @@ module.exports = {
       },
       email: {
         type: Sequelize.STRING,
-         allowNull: false,
-    unique: true,
+        allowNull: false,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       firstName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       lastName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       refreshToken: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       displayImage: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       isVerified: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       confirmationCode: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       confirmationExpires: {
         type: Sequelize.DATE,
-        allowNull: true
+        allowNull: true,
       },
       resetPasswordCode: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       resetPasswordExpires: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
-  }
+    // ✅ Correct table name here
+    await queryInterface.dropTable('user_account');
+  },
 };

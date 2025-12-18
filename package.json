@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@sendgrid/mail": "^8.1.5",
     "ajv": "^8.16.0",
     "bcryptjs": "^2.4.3",
