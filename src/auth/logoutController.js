@@ -21,34 +21,7 @@ const logOut = async (req, res) => {
 const redisClient = require('../../config/redisClient');
 const jwt = require('jsonwebtoken');
 
-const logOut = async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(400).json({ message: 'No token found' });
 
-    const decoded = jwt.decode(token);
-    const exp = decoded?.exp;
-
-    if (exp) {
-      //ttl - time to leave
-      const ttl = exp - Math.floor(Date.now() / 1000); // time until expiry in seconds
-      await redisClient.setEx(`bl_${token}`, ttl, 'blacklisted');
-    }
-
-    // clear refresh-token cookie, and handle DB if needed
-    res.clearCookie('refresh-token', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None'
-    });
-
-    return res.json({ message: 'Logged out successfully' });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Logout failed' });
-  }
-};
     const decoded = jwt.decode(token);
     const exp = decoded?.exp;
 
