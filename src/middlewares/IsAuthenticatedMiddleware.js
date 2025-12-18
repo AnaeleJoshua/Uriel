@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const  dotenv = require('dotenv')
-// const redisClient = require('../../config/redisClient')
+const redisClient = require('../../config/redisClient')
 dotenv.config()
 module.exports = {
     check:async (req,res,next)=>{
@@ -17,13 +17,13 @@ module.exports = {
         }
          // IF bearer auth header is not provided
     // THEN return 401 Unauthorized error
-    // if (!authHeader.startsWith('Bearer')){
-    //     return res.status(401).json({
-    //         "Status":'Bad request',
-    //         "Message":'Unauthorised',
-    //         "statusCode": 401
-    //     })
-    // }
+    if (!authHeader.startsWith('Bearer')){
+        return res.status(401).json({
+            "Status":'Bad request',
+            "Message":'Unauthorised',
+            "statusCode": 401
+        })
+    }
     const token = authHeader.split(' ')[1];
     console.log(`token : ${token}\n`)
     // console.log(`jwt : ${jwtSecret}\n`)
@@ -40,10 +40,10 @@ module.exports = {
       })
     }
     // Check Redis blacklist
-  // const isBlacklisted = await redisClient.get(`bl_${token}`);
-  // if (isBlacklisted) {
-  //   return res.status(403).json({ message: 'Invalid login. Please login again.' });
-  // }
+  const isBlacklisted = await redisClient.get(`bl_${token}`);
+  if (isBlacklisted) {
+    return res.status(403).json({ message: 'Invalid login. Please login again.' });
+  }
 
     jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,{algorithms:['HS256'],clockTolerance: 5},(err,user)=>{
        

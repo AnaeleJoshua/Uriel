@@ -65,18 +65,18 @@ console.log(`userId:${newUser.userId}`)
 
       // Email confirmation
       const baseUrl = `${req.protocol}://${req.get('host')}`;
-      // const { sent, code, expiration } = await sendConfirmationEmail(newUser, baseUrl, transaction);
+      const { sent, code, expiration } = await sendConfirmationEmail(newUser, baseUrl, transaction);
 
-      // if (!sent) {
-      //   await transaction.rollback();
-      //   return res.status(500).json({
-      //     status: "error",
-      //     message: "Failed to send confirmation email",
-      //     statusCode: 500,
-      //   });
-      // }
+      if (!sent) {
+        await transaction.rollback();
+        return res.status(500).json({
+          status: "error",
+          message: "Failed to send confirmation email",
+          statusCode: 500,
+        });
+      }
 
-      // await newUser.update({ confirmationCode: code, confirmationExpires: expiration }, { transaction });
+      await newUser.update({ confirmationCode: code, confirmationExpires: expiration }, { transaction });
 
       await transaction.commit();
 

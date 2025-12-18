@@ -13,9 +13,9 @@ module.exports = {
       await queryInterface.sequelize.query(
         `
         UPDATE "organisation" AS o
-        SET "newOwnerId" = u."newId"
+        SET "newOwnerId" = u."userId"
         FROM "user_account" AS u
-        WHERE o."ownerId" = u."userId";
+        WHERE o."ownerId"::text = u."userId";
         `,
         { transaction }
       );
