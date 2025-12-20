@@ -1,6 +1,6 @@
 const dbInitialization = require("../models/modelInit");
-const { generateAccessToken, generateRefreshToken, encryptPassword } = require('../../utils/utility');
-const sendConfirmationEmail = require('../../utils/emailConfirmation');
+const { generateAccessToken, generateRefreshToken, encryptPassword } = require('../utils/utility');
+const sendConfirmationEmail = require('../utils/emailConfirmation');
 const { createId } = require('@paralleldrive/cuid2');
 
 const handleRegister = async (req, res) => {

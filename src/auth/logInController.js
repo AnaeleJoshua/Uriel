@@ -1,5 +1,5 @@
 const dbInitialization = require("../models/modelInit");
-const { generateAccessToken, generateRefreshToken } = require('../../utils/utility');
+const { generateAccessToken, generateRefreshToken } = require('../utils/utility');
 const bcrypt = require('bcryptjs');
 
 const handleLogIn = async (req, res) => {

@@ -1,6 +1,6 @@
-const sendEmail = require('../../utils/sendEmail');
+const sendEmail = require('../utils/sendEmail');
 const dbInitialization = require('../models/modelInit');
-const { generateRandomToken, encryptPassword } = require('../../utils/utility');
+const { generateRandomToken, encryptPassword } = require('../utils/utility');
 const ejs = require('ejs');
 const path = require('path');
 const { Op } = require('sequelize');

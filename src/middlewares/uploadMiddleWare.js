@@ -1,7 +1,7 @@
 // middleware/upload.js
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../../config/cloudinaryConfig');
+const cloudinary = require('../config/cloudinaryConfig');
 const path = require('path');
 
 const allowedFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];

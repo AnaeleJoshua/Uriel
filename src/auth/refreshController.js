@@ -1,5 +1,5 @@
 const dbInitialization = require("../models/modelInit");
-const { generateAccessToken, generateRefreshToken } = require("../../utils/utility");
+const { generateAccessToken, generateRefreshToken } = require("../utils/utility");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 

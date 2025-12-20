@@ -1,11 +1,11 @@
 const dbInitialization = require("../models/modelInit");
-const cloudinary = require('../../config/cloudinaryConfig');
+const cloudinary = require('../config/cloudinaryConfig');
 
 module.exports = {
   // Get user by ID
   getUserById: async (req, res) => {
     const { sequelize, models } = await dbInitialization;
-    const { User, Organisation, UserOrganisation } = models;
+    const { User, Organisation } = models;
     const { id } = req.params;
 
     const transaction = await sequelize.transaction();

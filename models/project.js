@@ -23,7 +23,13 @@ module.exports = (sequelize, DataTypes) => {
       projectId: { type: DataTypes.STRING, primaryKey: true, allowNull: false, defaultValue: () => createId() },
       name: { type: DataTypes.STRING, allowNull: false },
       description: DataTypes.TEXT,
-      organisationId: { type: DataTypes.STRING, allowNull: false }
+      organisationId: { type: DataTypes.STRING, allowNull: false },
+       // ✅ Archive flag
+    isArchived: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    }
     },
     {
       sequelize,

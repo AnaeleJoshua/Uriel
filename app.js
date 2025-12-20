@@ -4,12 +4,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 const cors = require("cors");
-const corsOptions = require('./config/corsOptions');
+const corsOptions = require('./src/config/corsOptions');
 const morgan = require("morgan");
 const swaggerUI = require('swagger-ui-express');
 const redoc = require('redoc-express')
 const YAML = require('yamljs');
-const getSequelizeInstance = require('./config/db');
+const getSequelizeInstance = require('./src/config/db');
 const { logger } = require('./src/middlewares/logEvents');
 const credentials = require('./src/middlewares/credentials');
 const cookieParser = require('cookie-parser');
@@ -25,7 +25,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 //parse form data
 app.use(express.urlencoded({ extended: true }));
 // Middleware to serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/src/public')));
 
 // Custom middleware logger
 app.use(logger);
@@ -61,6 +61,7 @@ app.use(cookieParser());
     app.use("/api/v1/auth", require('./src/routes/authRoute'));
     app.use("/api/v1/users", require("./src/routes/userRoutes"));
     app.use("/api/v1/organisations", require("./src/routes/organisationsRoutes"));
+    app.use("/api/v1/projects", await require("./src/feature/project/project.routes")());
     app.get("/", (req, res) =>  res.sendFile(path.join(__dirname,'src/','views','index.html')))
     app.get("/avatar", (req, res) =>  res.sendFile(path.join(__dirname,'index.html')));
     // app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
