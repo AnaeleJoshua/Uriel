@@ -6,6 +6,10 @@ class ProjectController {
   }
 
   createProject = async (req, res) => {
+    const userId = req.user.id; // Assuming user ID is available in the request
+    req.body.ownerId = userId; // Set the ownerId to the current user's ID
+    req.body.createdBy = userId; // Set the createdBy field to the current user's ID
+    req.body.updatedBy = userId; // Set the updatedBy field to the current user's ID
     const project = await this.service.createProject(req.body);
     res.status(201).json(project);
   };

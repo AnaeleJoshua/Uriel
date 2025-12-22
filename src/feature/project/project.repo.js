@@ -58,6 +58,12 @@ class ProjectRepo {
       ...options,
     });
   }
+  async restoreProject(projectId, options = {}) {
+    return this.Project.restore({
+      where: { id: projectId },
+      ...options,
+    });
+  } 
 }
 
 module.exports = async () => {

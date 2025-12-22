@@ -1,11 +1,13 @@
 const projectRepo = require("./project.repo");
+const projectMemberRepo = require("./projectMembers.repo");
 const dbInitialization = require("../../models/modelInit");
 const eventBus = require("../../event/eventBus");
 const ProjectEvents = require("../../event/project/events");
 
 class ProjectService {
-  constructor(repo, sequelize) {
-    this.repo = repo;
+  constructor({projectRepo,projectMemberRepo}, sequelize) {
+    this.ProjectRepo = projectRepo;
+    this.ProjectMemberRepo = projectMemberRepo;
     this.sequelize = sequelize;
   }
 
@@ -13,7 +15,12 @@ class ProjectService {
     const transaction = await this.sequelize.transaction();
 
     try {
-      const project = await this.repo.create(data, { transaction });
+      const project = await this.ProjectRepo.create(data, { transaction });
+      const projectMember = await this.ProjectMemberRepo.create({
+        projectId: project.id,
+        userId: data.ownerId, // Assuming ownerId is passed in data
+        role: "owner",
+      }, { transaction });
       await transaction.commit();
 
       eventBus.emit(ProjectEvents.PROJECT_CREATED, project);
@@ -121,6 +128,7 @@ class ProjectService {
 
 module.exports = async function createProjectService() {
   const { sequelize } = await dbInitialization;
-  const repo = await projectRepo();
-  return new ProjectService(repo, sequelize);
+  const projectRepoInstance = await projectRepo();
+  const projectMemberRepoInstance = await projectMemberRepo();
+  return new ProjectService({projectRepo: projectRepoInstance, projectMemberRepo: projectMemberRepoInstance}, sequelize);
 };

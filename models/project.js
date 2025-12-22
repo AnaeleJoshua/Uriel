@@ -24,6 +24,33 @@ module.exports = (sequelize, DataTypes) => {
       name: { type: DataTypes.STRING, allowNull: false },
       description: DataTypes.TEXT,
       organisationId: { type: DataTypes.STRING, allowNull: false },
+      createBy: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      updatedBy: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      // ✅ Soft delete field
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      // ✅ Timestamps
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      // ✅ Owner field
+      ownerId: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
        // ✅ Archive flag
     isArchived: {
       type: DataTypes.BOOLEAN,
@@ -34,7 +61,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Project',
-      tableName: 'Projects'
+      tableName: 'Projects',
+      paranoid: true,          // ✅ enables soft delete
+      timestamps: true         // required for paranoid
     }
   );
 

@@ -29,6 +29,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('member', 'lead','owner'),
       defaultValue: 'member'
     },
+    isActive: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: true
+},
+removedAt: {
+  type: DataTypes.DATE,
+  allowNull: true
+},
+removedBy: {
+  type: DataTypes.STRING,
+  allowNull: true
+}
+,
     addedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
